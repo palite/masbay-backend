@@ -1,0 +1,15 @@
+extends layout
+block content 
+    if registrations.length
+        table.listing-table.table-dark.table-striped
+            tr
+                th Operator
+                th Nomor HP
+                th Denom
+            each registration in registrations
+                tr
+                    td= registration.operator
+                    td= registration.phone
+                    td= registration.denom
+    else
+        p Belum ada pembelian pulsa :(
