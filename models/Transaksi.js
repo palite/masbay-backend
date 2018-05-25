@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const registrationSchema = new mongoose.Schema({
+const skemaTransaksi = new mongoose.Schema({
     operator: {
         type: String,
         trim: true,
@@ -15,4 +15,4 @@ const registrationSchema = new mongoose.Schema({
     },
 });
 
-module.exports = mongoose.model('Registration', registrationSchema);
+module.exports = mongoose.model('Transaksi', skemaTransaksi);

@@ -1,15 +1,15 @@
 extends layout
 block content 
-    if registrations.length
+    if riwayatTransaksi.length
         table.listing-table.table-dark.table-striped
             tr
                 th Operator
                 th Nomor HP
                 th Denom
-            each registration in registrations
+            each transaksi in riwayatTransaksi
                 tr
-                    td= registration.operator
-                    td= registration.phone
-                    td= registration.denom
+                    td= transaksi.operator
+                    td= transaksi.phone
+                    td= transaksi.denom
     else
         p Belum ada pembelian pulsa :(

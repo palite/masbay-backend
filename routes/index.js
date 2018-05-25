@@ -9,7 +9,7 @@ const mongoose = require('mongoose');
 const { body, validationResult } = require('express-validator/check');
 
 const router = express.Router();
-const Registration = mongoose.model('Registration');
+const Transaksi = mongoose.model('Transaksi');
 
 router.get('/',
     (req, res) => {
@@ -17,12 +17,12 @@ router.get('/',
     }
 );
 
-router.get('/registrations', auth.connect(basic), (req, res) => {
-    Registration.find()
-        .then((registrations) => {
-            res.render('index', { title: 'Riwayat Pembelian Pulsa', registrations });
+router.get('/riwayatTransaksi', auth.connect(basic), (req, res) => {
+    Transaksi.find()
+        .then((riwayatTransaksi) => {
+            res.render('index', { title: 'Riwayat Pembelian Pulsa', riwayatTransaksi });
         })
-        .catch(() => { res.send('Sorry! Something went wrong.'); });
+        .catch(() => { res.send('Maaf! Terdapat error.'); });
 });
 
 router.post('/',
@@ -47,7 +47,7 @@ router.post('/',
             
             //REQUEST
             const request = require("request");
-            //console.log(process.env.SECRET);
+            
             var options = {
                 method: 'POST',
                 uri: 'https://api.pulsatop.com/partner/business/order',
@@ -75,8 +75,8 @@ router.post('/',
             });
 
             //Simpan transaksi ke dalam database
-            const registration = new Registration(req.body); 
-            registration.save() 
+            const transaksi = new Transaksi(req.body); 
+            transaksi.save() 
                 .then(() => { res.send('Terimakasih untuk pembeliannya!'); }) 
                 .catch(() => { res.send('Maaf pembelian gagal'); }); 
             
