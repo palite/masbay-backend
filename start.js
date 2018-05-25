@@ -1,10 +1,11 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
-mongoose.connect(process.env.DATABASE, { useMongoClient: true });
+mongoose.connect(process.env.DATABASE);
 mongoose.Promise = global.Promise;
+clusterDB = process.env.DATABASE.substring(process.env.DATABASE.indexOf('@'), process.env.DATABASE.indexOf('-'));
 mongoose.connection
     .on('connected', () => {
-        console.log(`Mongoose connection open on ${process.env.DATABASE}`);
+        console.log(`Mongoose connection open on ${clusterDB}`);
     })
     .on('error', (err) => {
         console.log(`Connection error: ${err.message}`);
