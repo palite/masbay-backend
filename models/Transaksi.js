@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const skemaTransaksi = new mongoose.Schema({
+const SkemaTransaksi = new mongoose.Schema({
     operator: {
         type: String,
         trim: true,
@@ -15,4 +15,4 @@ const skemaTransaksi = new mongoose.Schema({
     },
 });
 
-module.exports = mongoose.model('Transaksi', skemaTransaksi);
+module.exports = mongoose.model('Transaksi', SkemaTransaksi);

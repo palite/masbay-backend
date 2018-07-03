@@ -11,7 +11,7 @@ mongoose.connection
         console.log(`Connection error: ${err.message}`);
     });
 
-require('./models/Transaksi'); 
+require('./models/Transaksi');
 const app = require('./app');
 
 const server = app.listen(3000, () => {

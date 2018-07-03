@@ -42,38 +42,36 @@ router.post('/',
         
         if (errors.isEmpty()) {
             
-            //Transfer ke API
-            // Send a POST request
-            
-            //REQUEST
-            const request = require("request");
-            
-            var options = {
+            //Kirim ke API
+
+            const axios = require("axios");
+            var qs = require("qs");
+
+            //json pengganti raw code disini
+
+            //axios raw code
+            axios({
                 method: 'POST',
-                uri: 'https://api.pulsatop.com/partner/business/order',
-                qs: { key: process.env.KEY },
-                headers: {
-                    'Cache-Control': 'no-cache',
-                    'content-type': 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW'
+                url: 'https://api.pulsatop.com/partner/business/order',
+                params: {
+                    key: process.env.KEY,
                 },
-                formData: { 
+                config: { headers: {'Content-Type': 'multipart/form-data' }},
+                data: qs.stringify({ 
                     operator: req.body.operator,
                     phone: req.body.phone,
                     secret: process.env.SECRET,
                     denom: req.body.denom 
-                } 
-            };
-
-            console.log(options.formData);
-
-            request(options, function (error, response, body) {
-                if (error) throw new Error(error);
-                
-                console.log('errornya karena ', error);
-                console.log('statusCode-nya adalah ', response && response.statusCode);
-                console.log(body);
+                })
+            })
+            .then(function(response){
+                console.log(response.data);
+                console.log(response.status);
+            })
+            .catch(function(error){
+                console.log(error);
             });
-
+           
             //Simpan transaksi ke dalam database
             const transaksi = new Transaksi(req.body); 
             transaksi.save() 
