@@ -13,6 +13,29 @@ const SkemaTransaksi = new mongoose.Schema({
         type: String,
         trim: true,
     },
+    price: {
+        type: Number,
+        trim: true,
+    },
+    date: {
+        type: Date,
+        trim: true,
+        default: Date.now,
+    },
+    user: {
+        type: String,
+        trim: true,
+    },
+    status: {
+        type: String,
+        default: 'Pending',
+        trim: true,
+    },
+    channel: {
+        type: String,
+        default: 'Transfer', //diganti kalau sudah mau develop pembayaran via saldo
+        trim: true,
+    }
 });
 
 module.exports = mongoose.model('Transaksi', SkemaTransaksi);
