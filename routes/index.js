@@ -7,10 +7,20 @@ const Harga = mongoose.model('Harga');
 const Kodeawal = mongoose.model('Kodeawal');
 
 //timer
-/*function intervalFunc() {
-    console.log('Cant stop me now!');
+function updateStatusTransaksi() {
+    //console.log('Cant stop me now!');
+    var date3hour = new Date();
+    date3hour.setTime(date3hour.getTime() - (1000 * 10800)); //selisih 3 jam
+    //console.log(date3hour);
+    Transaksi.updateMany({status:'Pending', date:{$lte: date3hour}}, {status:'Expired'})
+    .then((UpdatedTransaksi) => {
+        //console.log(UpdatedTransaksi);
+    })
+    .catch(() => {
+        console.log('Error update status transaksi.');
+    });
 }
-setInterval(intervalFunc, 2000);*/
+setInterval(updateStatusTransaksi, 10000);
 
 router.get('/riwayatTransaksi', (req, res) => {
     Transaksi.find()
