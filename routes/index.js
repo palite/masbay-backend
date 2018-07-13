@@ -17,7 +17,9 @@ function updateStatusTransaksi() {
         console.log(err);
     });
 }
-setInterval(updateStatusTransaksi, 60000); //req setiap 1 menit
+
+updateStatusTransaksi();
+setInterval(updateStatusTransaksi, 30000); //req setiap 1 menit
 
 function updatePembayaran(){
 
@@ -26,7 +28,7 @@ function updatePembayaran(){
         var request = require("request");
         var options = {
             method: 'GET',
-            url: 'http://localhost/crawler_bni/check.php',
+            url: process.env.CRAWLER,
             headers: 
             { 'Cache-Control': 'no-cache' }
         };
@@ -121,7 +123,8 @@ function updatePembayaran(){
         console.log(err);
     })
 }
-//setInterval(updatePembayaran, 300000); //req setiap x / 1000 detik
+//updatePembayaran();
+//setInterval(updatePembayaran, 60000); //req setiap x / 1000 detik
 
 router.get('/riwayatTransaksi', (req, res) => {
     Transaksi.find()
@@ -219,86 +222,18 @@ const projectId = 'masbay-5e88e'; //https://dialogflow.com/docs/agents#settings
 const sessionId = 'quickstart-session-id';
 //const query = 'hello';
 const languageCode = 'en-US';
+
+var bodyParser = require('body-parser');
+router.use(bodyParser.json());
+router.use(bodyParser.urlencoded({extended: false}));
 // variable penentuan kondisi transfer 
 var bay = true;
 router.post('/chat',
     (req,res) => {
-        //kondisi rincian transfer transaksi
-      /*  if ((bay == false) && (req.body.text == "y" || req.body.text == "Y")) {
-            
-            ////inputTransaksi*^##^@@&(&@#)
-            console.log(denom,operator,nomor,bayar);
-            //ambil data transaksi price yang sedang dalam proses (Pending) dari database
-            //console.log(req.body);
-
-            //cari kode operator berdasarkan input nomor handphone
-            //var phone = req.body.phone;
-            var phone = nomor.substring(0, 4);
-            //console.log(typeof phone);
-            Kodeawal.find({nomor: phone}).distinct('operator')
-            .then((operatorKode) => {
-                //cari price yang sedang pending
-                Transaksi.find({status:'Pending'}).distinct('price')
-                .then((HargaPending) => {
-                    //cari price berdasarkan req.body.denom dan operator
-                    Harga.find({denom: denom, operator: operatorKode[0]})
-                    .then((price) => {
-                        //generate harga yang unik untuk setiap transaksi yang pending
-                        //pastikan tidak ada data price yang kembar di dalam database
-                        //ulangi generate harga sampai didapatkan harga yang unik dengan data harga di database
-                        let i = 0;
-                        do {
-                            let rand = Math.floor((Math.random() * 50) + 1); //generate random number antara 1-50
-                            var uniqprice = price[0].price + rand; //tambahkan price dengan random number
-                            let cekuniq = HargaPending.indexOf(uniqprice); // cek harga unik pada array object
-                            i++;
-                            if (cekuniq != -1) { //ada harga yang kembar
-                                continue;
-                            } else if ((cekuniq == -1) || (i==50)) { //harga unik atau harga sudah tidak mungkin unik
-                                break;
-                            }
-                        } while (true);
-                        if (i!= 50) {
-                            var date3hour = new Date();
-                            date3hour.setTime(date3hour.getTime() + (1000 * 10740)); //selisih 3 jam - 1 menit
-                            
-                            //simpan data harga ke dalam request yang akan disimpan ke dalam database
-                            const transaksi = new Transaksi(req.body);
-                            transaksi.operator = operatorKode[0];
-                            transaksi.price = uniqprice;
-                            transaksi.date = date3hour;
-                            transaksi.save()
-                            .then((TransaksiSukses) => {
-                                res.send(TransaksiSukses);
-                            }) 
-                            .catch(() => {
-                                res.send('Maaf! Terdapat error POST data transaksi ke database');
-                            }); 
-                        } else {
-                            res.send('Maaf! Server sedang sibuk menangani pembelian. Silahkan coba beberapa saat lagi.');
-                        }
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                        res.send(err);
-                    });  
-                })
-                .catch(() => {
-                    res.send('Maaf! Terdapat error GET harga pending');
-                });
-            })
-            .catch(() => {
-                res.send('Maaf! Terdapat error GET kode Operator');
-            });  
-            /////%@#@#$@#$
-            //res.send("transaksi berhasil");
-            bay = true;
-        }
-        else { */
         bay = true;
         var apiai = require('apiai');
         
-        var kk = apiai("784469cdbf5f43ea84d7f454a6a7c5fb");
+        var kk = apiai(process.env.TOKENAPIAI);
         
         var request = kk.textRequest(req.body.text, {
             sessionId: session,
