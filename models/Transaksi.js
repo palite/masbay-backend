@@ -20,7 +20,6 @@ const SkemaTransaksi = new mongoose.Schema({
     date: {
         type: Date,
         trim: true,
-        default: Date.now,
     },
     user: {
         type: String,
