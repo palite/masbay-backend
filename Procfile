@@ -1,1 +1,1 @@
-bot : node start.js
+wee : node start.js
