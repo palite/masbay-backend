@@ -20,7 +20,7 @@ function updateStatusTransaksi() {
 }
 
 updateStatusTransaksi();
-setInterval(updateStatusTransaksi, 60000); //req setiap 1/2 menit
+setInterval(updateStatusTransaksi, 300000); //req setiap 1/2 menit
 
 function updatePembayaran(){
 
@@ -36,7 +36,7 @@ function updatePembayaran(){
         request(options, function (error, response, body) {
             if (error) throw new Error(error);
         
-            //console.log(JSON.stringify(body));
+            console.log(JSON.stringify(body));
             var cekmutasi = JSON.stringify(body);
             var errcrawler = cekmutasi.search("Kesalahan");
             if (errcrawler == 1) { //kesalahan crawler
