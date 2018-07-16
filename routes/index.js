@@ -36,7 +36,7 @@ function updatePembayaran(){
         request(options, function (error, response, body) {
             if (error) throw new Error(error);
         
-            console.log(JSON.stringify(body));
+            //console.log(JSON.stringify(body));
             var cekmutasi = JSON.stringify(body);
             var errcrawler = cekmutasi.search("Kesalahan");
             if (errcrawler == 1) { //kesalahan crawler
@@ -61,7 +61,7 @@ function updatePembayaran(){
                 var i;
                 for (i = 0; i < TransaksiPending.length; i++) { 
                     var cekprice = TransaksiPending[i].formatRupiah(0, ',', '.'); //edit 5850 -> 5.850 
-                    cekprice = '"' + cekprice + ',00"';
+                    cekprice = '' + cekprice + ',00';
                     //console.log(cekprice);
                     var trfketemu = cekmutasi.search(cekprice); //cek array, ada yang sama dengan array[i] kah
                     //console.log(trfketemu);
