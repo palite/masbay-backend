@@ -251,8 +251,9 @@ router.post('/chat',
                                 transaksi.channel = bayar;
                                 transaksi.save()
                                 .then((TransaksiSukses) => {
+                                    let hari = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
                                     console.log(TransaksiSukses);
-                                    res.send("Pembelian "+ operator+ " sebanyak " + denom + " untuk "+ nomor +" dengan "+ bayar+ " sejumlah Rp " + uniqprice + ",00. berhasil. Harap melakukan transfer ke rekening BNI berikut: 0427222248 (a.n Muhammad Habibullah) paling lambat"+ date3hour + "*n");
+                                    res.send("Pembelian "+ operator+ " sebanyak " + denom + " untuk "+ nomor +" dengan "+ bayar+ " sejumlah Rp " + uniqprice + ",00. berhasil. Harap melakukan transfer ke rekening BNI berikut: 0427222248 (a.n Muhammad Habibullah) paling lambat pukul " + date3hour.getHours + "." + date3hour.getMinutes() + " hari " + hari[date3hour.getDay()] + ", " + date3hour.getDate() + " " + date3hour.getMonth() + " " + date3hour.getFullYear() + " " + "*n");
                                 }) 
                                 .catch((err) => {
                                     console.log(err);
