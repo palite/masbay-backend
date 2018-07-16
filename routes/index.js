@@ -136,7 +136,11 @@ setInterval(updatePembayaran, 1800000); //req setiap x / 1000 detik
 
 const uuidv1 = require('uuid/v1');
 var session = uuidv1();
-setInterval(function() {session = uuidv1();}, 60000); //setiap 1 menit
+setInterval(
+    function() {
+        session = uuidv1();
+    }
+    , 120000);
 
 //////////////////////////////////////////////////////////
 
@@ -156,19 +160,9 @@ router.post('/chat',
         var apiai = require('apiai');
         
         var kk = apiai(process.env.TOKENAPIAI);
-
-        if (req.session.chat) {
-            //sudah ada session
-            // do nothing
-        } else {
-            //belum ada session
-            req.session.chat = session;
-            //reset variabel session di server
-            session = uuidv1(); //ini masih gak tau bisa ngubah variabel session di luar atau belum
-        }
-
+        
         var request = kk.textRequest(req.body.text, {
-            sessionId: req.session.chat,
+            sessionId: session,
         });
         //menerima input dari api.ai
         request.on('response', function(response) {
@@ -261,13 +255,6 @@ router.post('/chat',
                                     let bulan = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
                                     console.log(TransaksiSukses);
                                     res.send("Pembelian "+ operator+ " sebanyak " + denom + " untuk "+ nomor +" dengan "+ bayar+ " sejumlah Rp " + uniqprice + ",00. berhasil. Harap melakukan transfer ke rekening BNI berikut: 0427222248 (a.n Muhammad Habibullah) paling lambat pukul " + date3hour.getHours() + "." + date3hour.getMinutes() + " hari " + hari[date3hour.getDay()] + ", " + date3hour.getDate() + " " + bulan[date3hour.getMonth()] + " " + date3hour.getFullYear() + ". Mohon transfer sesuai dengan jumlah transfer agar dapat diproses secara otomatis." + "*n");
-                                    req.session.destroy(function(err) {
-                                        if(err) {
-                                            console.log(err);
-                                        } else {
-                                            console.log('session berhasil dihapus');
-                                        }
-                                    });                    
                                 }) 
                                 .catch((err) => {
                                     console.log(err);
@@ -291,14 +278,6 @@ router.post('/chat',
                 res.send('Maaf! Terdapat error GET kode Operator');
             });  
             /////%@#@#$@#$
-            } else if (req.body.text == 'reset') {
-                req.session.destroy(function(err) {
-                    if(err) {
-                        console.log(err);
-                    } else {
-                        res.redirect('/');
-                    }
-                });
             }
             else {
             //console.log(response.result.contexts[0].name);
