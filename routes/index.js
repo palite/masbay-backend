@@ -131,7 +131,7 @@ function updatePembayaran(){
         console.log("gagal mendapat data transaksi yg pending pada database. cek konfigurasi database");
     })
 }
-//updatePembayaran();
+updatePembayaran();
 setInterval(updatePembayaran, 1800000); //req setiap x / 1000 detik
 
 const uuidv1 = require('uuid/v1');
