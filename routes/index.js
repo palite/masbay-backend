@@ -325,7 +325,7 @@ router.post('/chat',
                                 transaksi.channel = bayar;
                                 transaksi.save()
                                 .then((TransaksiSukses) => {
-                                    res.send("Pembelian "+ operator+ " sebanyak " + denom + " untuk "+ nomor +" dengan "+ bayar+ " sejumlah Rp " + uniqprice + ",00. berhasil. Harap segera melakukan transfer ke rekening BNI berikut: 0427222248 (a.n Muhammad Habibullah)");
+                                    res.send("Pembelian "+ operator+ " sebanyak " + denom + " untuk "+ nomor +" dengan "+ bayar+ " sejumlah Rp " + uniqprice + ",00. berhasil. Harap segera melakukan transfer ke rekening BNI berikut: 0427222248 (a.n Muhammad Habibullah)*n");
                                     //console.log('hai');
                                 }) 
                                 .catch(() => {
