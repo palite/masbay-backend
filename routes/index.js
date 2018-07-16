@@ -199,13 +199,6 @@ router.post('/chat',
                 
             }
             else if (hihi != -1) {
-                req.session.destroy(function(err) {
-                    if(err) {
-                        console.log(err);
-                    } else {
-                        console.log('session berhasil dihapus');
-                    }
-                });
                 var haha = hehe.split(",");
                 //console.log(response.result.contexts[3]);
                 var denom = haha[2];
@@ -268,6 +261,13 @@ router.post('/chat',
                                     let bulan = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
                                     console.log(TransaksiSukses);
                                     res.send("Pembelian "+ operator+ " sebanyak " + denom + " untuk "+ nomor +" dengan "+ bayar+ " sejumlah Rp " + uniqprice + ",00. berhasil. Harap melakukan transfer ke rekening BNI berikut: 0427222248 (a.n Muhammad Habibullah) paling lambat pukul " + date3hour.getHours() + "." + date3hour.getMinutes() + " hari " + hari[date3hour.getDay()] + ", " + date3hour.getDate() + " " + bulan[date3hour.getMonth()] + " " + date3hour.getFullYear() + ". Mohon transfer sesuai dengan jumlah transfer agar dapat diproses secara otomatis." + "*n");
+                                    req.session.destroy(function(err) {
+                                        if(err) {
+                                            console.log(err);
+                                        } else {
+                                            console.log('session berhasil dihapus');
+                                        }
+                                    });                    
                                 }) 
                                 .catch((err) => {
                                     console.log(err);
