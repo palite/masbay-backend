@@ -19,7 +19,7 @@ function updateStatusTransaksi() {
 }
 
 updateStatusTransaksi();
-setInterval(updateStatusTransaksi, 30000); //req setiap 1 menit
+setInterval(updateStatusTransaksi, 30000); //req setiap 1/2 menit
 
 function updatePembayaran(){
 
@@ -123,7 +123,7 @@ function updatePembayaran(){
         console.log(err);
     })
 }
-updatePembayaran();
+//updatePembayaran();
 setInterval(updatePembayaran, 300000); //req setiap x / 1000 detik
 
 router.get('/riwayatTransaksi', (req, res) => {
