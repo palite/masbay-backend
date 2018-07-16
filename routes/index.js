@@ -124,7 +124,7 @@ function updatePembayaran(){
     })
 }
 //updatePembayaran();
-setInterval(updatePembayaran, 300000); //req setiap x / 1000 detik
+setInterval(updatePembayaran, 1800000); //req setiap x / 1000 detik
 
 router.get('/riwayatTransaksi', (req, res) => {
     Transaksi.find()
