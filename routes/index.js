@@ -20,7 +20,7 @@ function updateStatusTransaksi() {
 }
 
 updateStatusTransaksi();
-setInterval(updateStatusTransaksi, 300000); //req setiap 1/2 menit
+setInterval(updateStatusTransaksi, 60000); //req setiap 1/2 menit
 
 function updatePembayaran(){
 
@@ -132,7 +132,7 @@ function updatePembayaran(){
     })
 }
 updatePembayaran();
-setInterval(updatePembayaran, 60000); //req setiap x / 1000 detik
+setInterval(updatePembayaran, 300000); //req setiap x / 1000 detik
 
 const uuidv1 = require('uuid/v1');
 var session = uuidv1();
