@@ -132,7 +132,7 @@ function updatePembayaran(){
     })
 }
 updatePembayaran();
-setInterval(updatePembayaran, 1800000); //req setiap x / 1000 detik
+setInterval(updatePembayaran, 60000); //req setiap x / 1000 detik
 
 const uuidv1 = require('uuid/v1');
 var session = uuidv1();
