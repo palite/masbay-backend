@@ -212,7 +212,7 @@ router.post('/chat',
                 .then((operatorKode) => {
                     var operator = operatorKode[0];
                     var date1monthago = new Date();
-                    date1monthago.setTime(date1month.getTime() - (1000 * 60 * 60 * 24 * 30));
+                    date1monthago.setTime(date1monthago.getTime() - (1000 * 60 * 60 * 24 * 30));
                     //cari price yang mungkin ada dlm list mutasi selama periode sebulan
                     Transaksi.find({status: {$in: ['Pending', 'Success']}, date:{$gte: date1monthago}}).distinct('price')
                     .then((HargaPending) => {
