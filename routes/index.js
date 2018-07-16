@@ -6,15 +6,16 @@ const Transaksi = mongoose.model('Transaksi');
 const Harga = mongoose.model('Harga');
 const Kodeawal = mongoose.model('Kodeawal');
 
-//timer
+//timer update status transaksi
 function updateStatusTransaksi() {
-    var dateNow = new Date();
+    let dateNow = new Date();
     Transaksi.updateMany({status:'Pending', date:{$lte: dateNow}}, {status:'Expired'})
     .then((UpdatedTransaksi) => {
         //console.log(UpdatedTransaksi);
     })
     .catch((err) => {
         console.log(err);
+        console.log('Error update status transaksi');
     });
 }
 
@@ -35,11 +36,11 @@ function updatePembayaran(){
         request(options, function (error, response, body) {
             if (error) throw new Error(error);
         
-            console.log(JSON.stringify(body));
+            //console.log(JSON.stringify(body));
             var cekmutasi = JSON.stringify(body);
             var errcrawler = cekmutasi.search("Kesalahan");
-            if (errcrawler == 0) { //kesalahan crawler
-                console.log(errcrawler);
+            if (errcrawler == 1) { //kesalahan crawler
+                console.log("Crawler bank BNI failed to get data!");
             } else {
                 ////------------------------------------------------////
                 ///////////////////////Editor Rupiah////////////////////
@@ -60,13 +61,14 @@ function updatePembayaran(){
                 var i;
                 for (i = 0; i < TransaksiPending.length; i++) { 
                     var cekprice = TransaksiPending[i].formatRupiah(0, ',', '.'); //edit 5850 -> 5.850 
-                    console.log(cekprice);
+                    cekprice = '"' + cekprice + ',00"';
+                    //console.log(cekprice);
                     var trfketemu = cekmutasi.search(cekprice); //cek array, ada yang sama dengan array[i] kah
-                    console.log(trfketemu);
+                    //console.log(trfketemu);
                     if (trfketemu == -1) { // gak ketemu
-                        console.log('gagal, coba lagi!');
+                        //console.log('gagal, coba lagi!');
                     } else { //ketemu
-                        console.log('ketemu!');
+                        //console.log('ketemu!');
                         //ambil seluruh data dr price tsb
                         Transaksi.find({status:'Pending', price: TransaksiPending[i]})
                         .then((paidTransaction) => {
@@ -74,7 +76,7 @@ function updatePembayaran(){
 
                             const axios = require("axios");
                             var qs = require("qs");
-                            pt = paidTransaction;
+                            let pt = paidTransaction;
                             
                             //axios raw code
                             axios({
@@ -100,19 +102,24 @@ function updatePembayaran(){
                                     Transaksi.update({_id : pt[0]._id}, {status: 'Success'})
                                     .then((SuksesIsiPulsa) => {
                                         console.log(SuksesIsiPulsa);
-                                        console.log("Cek hape!!!!");
+                                        let PesanSukses = "Pengisian pulsa " + pt[0].phone + " sukses!" ;
+                                        console.log(PesanSukses);
                                     })
                                     .catch((err) => {
                                         console.log(err);
+                                        let PesanError = "Pulsa mungkin sudah terisi namun pencatatan transaksi gagal. Nomor HP: " . pt[0].phone;
+                                        console.log(PesanError);
                                     })
                                 }
                             })
                             .catch((err) =>{
                                 console.log(err);
+                                console.log("Akses ke API pulsatop gagal");
                             });         
                         }) 
                         .catch((err) => {
                             console.log(err);
+                            console.log("Pencarian data transaksi dari harga yang ditemukan gagal! Mungkin ada data yg tidak sinkron pada database")
                         })
                     }                    
                 }
@@ -121,92 +128,11 @@ function updatePembayaran(){
     })
     .catch((err) => {
         console.log(err);
+        console.log("gagal mendapat data transaksi yg pending pada database. cek konfigurasi database");
     })
 }
 //updatePembayaran();
 setInterval(updatePembayaran, 1800000); //req setiap x / 1000 detik
-
-router.get('/riwayatTransaksi', (req, res) => {
-    Transaksi.find()
-    .then((RiwayatTransaksi) => {
-        res.json(RiwayatTransaksi);
-    })
-    .catch(() => {
-        res.send('Maaf! Terdapat error.');
-    });
-});
-
-router.get('/listHarga', (req, res) => {
-    Harga.find().sort({'operator':1, 'denom':1})
-    .then((ListHarga) => {
-        res.json(ListHarga);
-    })
-    .catch(() => {
-        res.send("Maaf! Terdapat error.");
-    });
-});
-
-router.get('/listOperator', (req, res) => {
-    Harga.find().distinct('operator')
-    .then((ListOperator) => {
-        res.send(ListOperator);
-    })
-    .catch((err) => {
-        res.send(err);
-    })
-});
-
-router.get('/listOperator/:prioritas', (req, res) => {
-    Harga.find().distinct('operator')
-    .then((ListOperator) => {
-        let i = 0;
-        while (true) {
-            if (ListOperator[i] == req.params.prioritas) {
-                //swap list operator prioritas
-                let dummy = ListOperator[0];
-                ListOperator[0] = req.params.prioritas;
-                ListOperator[i] = dummy;
-                break;
-            } else {
-                i++;
-            }
-            if (i == (ListOperator.length - 1)) {
-                break; //antisipasi error typo URL akses ke API
-            }
-        }
-        res.send(ListOperator);
-    })
-    .catch((err) => {
-        res.send(err);
-    })
-});
-
-router.get('/listHarga/:operator', (req, res) => {
-    Harga.find({operator: req.params.operator}).sort({'denom':1})
-    .then((ListHargaOperator) => {
-        res.json(ListHargaOperator);
-    })
-    .catch(() => {
-        res.send("Maaf! Terdapat error.");
-    })
-});
-
-router.get('/listHarga/nomor/:nomor', (req, res) => {
-    Kodeawal.find({nomor: req.params.nomor}).distinct('operator')
-    .then((KodeNomor) => {
-        console.log(KodeNomor);
-        Harga.find({operator: KodeNomor[0]}).sort({'denom':1})
-        .then((ListHargaOperator) => {
-            res.json(ListHargaOperator);
-        })
-        .catch(() => {
-            res.send("Maaf! Terdapat error GET Harga.");
-        });
-    })
-    .catch(() => {
-        res.send("Maaf! Terdapat error GET Kode Awal.");
-    });
-});
 
 const uuidv1 = require('uuid/v1');
 var session = uuidv1();
@@ -325,23 +251,24 @@ router.post('/chat',
                                 transaksi.channel = bayar;
                                 transaksi.save()
                                 .then((TransaksiSukses) => {
+                                    console.log(TransaksiSukses);
                                     res.send("Pembelian "+ operator+ " sebanyak " + denom + " untuk "+ nomor +" dengan "+ bayar+ " sejumlah Rp " + uniqprice + ",00. berhasil. Harap segera melakukan transfer ke rekening BNI berikut: 0427222248 (a.n Muhammad Habibullah)*n");
-                                    //console.log('hai');
                                 }) 
-                                .catch(() => {
+                                .catch((err) => {
+                                    console.log(err);
                                     res.send('Maaf! Terdapat error POST data transaksi ke database');
-                                    //res.send(err);
                                 }); 
                             } else {
-                                res.send('Maaf! Server sedang sibuk menangani pembelian. Silahkan coba beberapa saat lagi.');
+                                res.send('Maaf! Server sedang sibuk menangani pembelian. Silahkan coba beberapa saat lagi.'); //random number tidak mungkin membuat kode unik setelah 50x loop
                             }
                         })
                         .catch((err) => {
                             console.log(err);
-                            res.send(err);
+                            res.send('Maaf! Server tidak menemukan harga untuk permintaan pembalian pulsa dengan nominal tsb.');
                         });  
                     })
-                    .catch(() => {
+                    .catch((err) => {
+                        console.log(err);
                         res.send('Maaf! Terdapat error GET harga pending');
                     });
                 })
@@ -365,103 +292,7 @@ router.post('/chat',
         
     })
 //////////////////////////////////////////////////////////////////////
-/*
-router.post('/inputTransaksi', (req, res) => {
-    //ambil data transaksi price yang sedang dalam proses (Pending) dari database
-    //console.log(req.body);
 
-    //cari kode operator berdasarkan input nomor handphone
-    //var phone = req.body.phone;
-    var phone = req.body.phone.substring(0, 4);
-    //console.log(typeof phone);
-    Kodeawal.find({nomor: phone}).distinct('operator')
-    .then((operator) => {
-        //cari price yang sedang pending
-        Transaksi.find({status:'Pending'}).distinct('price')
-        .then((HargaPending) => {
-            //cari price berdasarkan req.body.denom dan operator
-            Harga.find({denom: req.body.denom, operator: operator[0]})
-            .then((price) => {
-                //generate harga yang unik untuk setiap transaksi yang pending
-                //pastikan tidak ada data price yang kembar di dalam database
-                //ulangi generate harga sampai didapatkan harga yang unik dengan data harga di database
-                let i = 0;
-                do {
-                    let rand = Math.floor((Math.random() * 50) + 1); //generate random number antara 1-50
-                    var uniqprice = price[0].price + rand; //tambahkan price dengan random number
-                    let cekuniq = HargaPending.indexOf(uniqprice); // cek harga unik pada array object
-                    i++;
-                    if (cekuniq != -1) { //ada harga yang kembar
-                        continue;
-                    } else if ((cekuniq == -1) || (i==50)) { //harga unik atau harga sudah tidak mungkin unik
-                        break;
-                    }
-                } while (true);
-                if (i!= 50) {
-                    var date3hour = new Date();
-                    date3hour.setTime(date3hour.getTime() + (1000 * 10740)); //selisih 3 jam - 1 menit
-                    
-                    //simpan data harga ke dalam request yang akan disimpan ke dalam database
-                    const transaksi = new Transaksi(req.body);
-                    transaksi.operator = operator[0];
-                    transaksi.price = uniqprice;
-                    transaksi.date = date3hour;
-                    transaksi.save()
-                    .then((TransaksiSukses) => {
-                        res.send(TransaksiSukses);
-                    }) 
-                    .catch(() => {
-                        res.send('Maaf! Terdapat error POST data transaksi ke database');
-                    }); 
-                } else {
-                    res.send('Maaf! Server sedang sibuk menangani pembelian. Silahkan coba beberapa saat lagi.');
-                }
-            })
-            .catch((err) => {
-                console.log(err);
-                res.send(err);
-            });  
-        })
-        .catch(() => {
-            res.send('Maaf! Terdapat error GET harga pending');
-        });
-    })
-    .catch(() => {
-        res.send('Maaf! Terdapat error GET kode Operator');
-    });  
-});
-
-router.post('/isiPulsa', (req, res) => {
-    //Kirim ke API
-
-    const axios = require("axios");
-    var qs = require("qs");
-
-    //json pengganti raw code disini
-
-    //axios raw code
-    axios({
-        method: 'POST',
-        url: process.env.APIPULSATOP,
-        params: {
-            key: process.env.KEY,
-        },
-        data: qs.stringify({ 
-            operator: req.body.operator,
-            phone: req.body.phone,
-            secret: process.env.SECRET,
-            denom: req.body.denom 
-        })
-    })
-    .then(function(response){
-        console.log(response.data);
-        console.log(response.status);
-    })
-    .catch(function(error){
-        console.log(error);
-    });         
-});
-*/
 //Akses ke Wit.Ai
 
 const {Wit, log} = require('node-wit');
