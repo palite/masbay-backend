@@ -260,7 +260,7 @@ router.post('/chat',
                     Harga.find({denom: denom, operator: operatorKode[0]})
                     .then((hargaPulsa) => {
                     var price = hargaPulsa[0].price;    
-                    res.send("Pembelian "+ operatorKode[0]+ " sejumlah " + denom + " untuk "+ nomer +" dengan "+ bayar+ " sejumlah Rp " + price + ",00. Apakah anda yakin ? (y/n)");
+                    res.send("Pembelian "+ operatorKode[0]+ " sejumlah " + denom + " untuk "+ nomer +" dengan "+ bayar+ " sejumlah Rp " + price + ",00. Apakah anda yakin ? (y/n)*yn");
                    // bay = false;
                 })
             })          
