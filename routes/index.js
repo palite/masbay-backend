@@ -42,6 +42,7 @@ function updatePembayaran(){
             if (errcrawler == 1) { //kesalahan crawler
                 console.log("Crawler bank BNI failed to get data!");
             } else {
+                console.log("Crawler berhasil");
                 ////------------------------------------------------////
                 ///////////////////////Editor Rupiah////////////////////
                 ////------------------------------------------------////
@@ -101,7 +102,7 @@ function updatePembayaran(){
                                     //update status pembelian ke sukses
                                     Transaksi.update({_id : pt[0]._id}, {status: 'Success'})
                                     .then((SuksesIsiPulsa) => {
-                                        console.log(SuksesIsiPulsa);
+                                        //console.log(SuksesIsiPulsa);
                                         let PesanSukses = "Pengisian pulsa " + pt[0].phone + " sukses!" ;
                                         console.log(PesanSukses);
                                     })
