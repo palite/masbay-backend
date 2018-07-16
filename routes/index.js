@@ -123,8 +123,8 @@ function updatePembayaran(){
         console.log(err);
     })
 }
-//updatePembayaran();
-//setInterval(updatePembayaran, 60000); //req setiap x / 1000 detik
+updatePembayaran();
+setInterval(updatePembayaran, 60000); //req setiap x / 1000 detik
 
 router.get('/riwayatTransaksi', (req, res) => {
     Transaksi.find()
@@ -240,31 +240,41 @@ router.post('/chat',
         });
         //menerima input dari api.ai
         request.on('response', function(response) {
+            var hehe = response.result.fulfillment.speech;
+           var hoho = hehe.indexOf("*ok*");
+           var hihi = hehe.indexOf("*wk*");
+           //console.log(typeof haha);
             //kondisi saat rincian pembelian
-            if (response.result.metadata.intentName == "pulsa - operator - denom - nomor - pembayaran") {
-               console.log(response.result.contexts[3]);
-                var denom = response.result.contexts[3].parameters.banyak[0]; 
-               var nomor = response.result.contexts[3].parameters.nomor.number; 
-               var operator = response.result.contexts[3].parameters.operator[0];
-               var bayar = response.result.contexts[3].parameters.pembayaran;
-                console.log(denom,operator,nomor,bayar);
-                var operator1 = operator.toLowerCase();
-                Harga.find({denom: denom, operator: operator1})
-                .then((hargaPulsa) => {
-                    var price = hargaPulsa[0].price;
-                    res.send("Pembelian "+ operator+ " sebanyak " + denom + " untuk "+ nomor +" dengan "+ bayar+ " sejumlah Rp " + price + ",00. Apakah anda yakin ? (y/n)");
-                    bay = false;
+            if (hoho != -1) {
+                var haha = hehe.split(",");
+                //console.log(response.result.contexts[3]);
+                var denom = haha[2];
+               var nomer = haha[1];
+               //var operator = response.result.contexts[3].parameters.operator[0];
+               var bayar = haha[3];
+               var phone = nomer.substring(0, 4);
+                console.log(denom,nomer,bayar);
+                Kodeawal.find({nomor: phone}).distinct('operator')
+                .then((operatorKode) => {
+                //var operator1 = operator.toLowerCase();
+                    Harga.find({denom: denom, operator: operatorKode[0]})
+                    .then((hargaPulsa) => {
+                    var price = hargaPulsa[0].price;    
+                    res.send("Pembelian "+ operatorKode[0]+ " sejumlah " + denom + " untuk "+ nomer +" dengan "+ bayar+ " sejumlah Rp " + price + ",00. Apakah anda yakin ? (y/n)");
+                   // bay = false;
                 })
+            })          
                 
             }
-            else if (response.result.metadata.intentName == "pulsa - operator - denom - nomor - pembayaran - yes") {
-                console.log(response.result.contexts[3]);
-                var denom = response.result.contexts[3].parameters.banyak[0]; 
-               var nomor = response.result.contexts[3].parameters.nomor.number; 
-               var operator = response.result.contexts[3].parameters.operator[0];
-               var bayar = response.result.contexts[3].parameters.pembayaran;
+            else if (hihi != -1) {
+                var haha = hehe.split(",");
+                //console.log(response.result.contexts[3]);
+                var denom = haha[2];
+               var nomor = haha[1];
+               //var operator = response.result.contexts[3].parameters.operator[0];
+               var bayar = haha[3];
                 ////inputTransaksi*^##^@@&(&@#)
-                console.log(denom,operator,nomor,bayar);
+                console.log(denom,nomor,bayar);
                 //ambil data transaksi price yang sedang dalam proses (Pending) dari database
                 //console.log(req.body);
 
@@ -274,11 +284,15 @@ router.post('/chat',
                 //console.log(typeof phone);
                 Kodeawal.find({nomor: phone}).distinct('operator')
                 .then((operatorKode) => {
+                    var operator = operatorKode[0];
                     //cari price yang sedang pending
-                    Transaksi.find({status:'Pending'}).distinct('price')
+                    var date1month = new Date();
+                    date1month.setTime(date1month.getTime() - (1000 * 60 * 60 * 24 * 30));
+                    Transaksi.find({status: {$in: ['Pending', 'Success']}, date:{$gte: date1month}}).distinct('price')
                     .then((HargaPending) => {
+                        //console.log(HargaPending);
                         //cari price berdasarkan req.body.denom dan operator
-                        Harga.find({denom: denom, operator: operatorKode[0]})
+                        Harga.find({denom: denom, operator: operator})
                         .then((price) => {
                             //generate harga yang unik untuk setiap transaksi yang pending
                             //pastikan tidak ada data price yang kembar di dalam database
@@ -301,7 +315,7 @@ router.post('/chat',
                                 
                                 //simpan data harga ke dalam request yang akan disimpan ke dalam database
                                 const transaksi = new Transaksi();
-                                transaksi.operator = operatorKode[0];
+                                transaksi.operator = operator;
                                 transaksi.price = uniqprice;
                                 transaksi.date = date3hour;
                                 
@@ -312,9 +326,11 @@ router.post('/chat',
                                 transaksi.save()
                                 .then((TransaksiSukses) => {
                                     res.send("Pembelian "+ operator+ " sebanyak " + denom + " untuk "+ nomor +" dengan "+ bayar+ " sejumlah Rp " + uniqprice + ",00. berhasil. Harap segera melakukan transfer ke rekening BNI berikut: 0427222248 (a.n Muhammad Habibullah)");
+                                    //console.log('hai');
                                 }) 
                                 .catch(() => {
                                     res.send('Maaf! Terdapat error POST data transaksi ke database');
+                                    //res.send(err);
                                 }); 
                             } else {
                                 res.send('Maaf! Server sedang sibuk menangani pembelian. Silahkan coba beberapa saat lagi.');
@@ -349,7 +365,7 @@ router.post('/chat',
         
     })
 //////////////////////////////////////////////////////////////////////
-
+/*
 router.post('/inputTransaksi', (req, res) => {
     //ambil data transaksi price yang sedang dalam proses (Pending) dari database
     //console.log(req.body);
@@ -445,7 +461,7 @@ router.post('/isiPulsa', (req, res) => {
         console.log(error);
     });         
 });
-
+*/
 //Akses ke Wit.Ai
 
 const {Wit, log} = require('node-wit');

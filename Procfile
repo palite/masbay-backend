@@ -1,1 +1,1 @@
-wee : node start.js
+web: node start.js
