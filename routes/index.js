@@ -136,11 +136,7 @@ setInterval(updatePembayaran, 1800000); //req setiap x / 1000 detik
 
 const uuidv1 = require('uuid/v1');
 var session = uuidv1();
-setInterval(
-    function() {
-        session = uuidv1();
-    }
-    , 120000);
+setInterval(function() {session = uuidv1();}, 60000); //setiap 1 menit
 
 //////////////////////////////////////////////////////////
 
@@ -160,9 +156,19 @@ router.post('/chat',
         var apiai = require('apiai');
         
         var kk = apiai(process.env.TOKENAPIAI);
-        
+
+        if (req.session.chat) {
+            //sudah ada session
+            // do nothing
+        } else {
+            //belum ada session
+            req.session.chat = session;
+            //reset variabel session di server
+            session = uuidv1(); //ini masih gak tau bisa ngubah variabel session di luar atau belum
+        }
+
         var request = kk.textRequest(req.body.text, {
-            sessionId: session,
+            sessionId: req.session.chat,
         });
         //menerima input dari api.ai
         request.on('response', function(response) {
@@ -193,6 +199,13 @@ router.post('/chat',
                 
             }
             else if (hihi != -1) {
+                req.session.destroy(function(err) {
+                    if(err) {
+                        console.log(err);
+                    } else {
+                        console.log('session berhasil dihapus');
+                    }
+                });
                 var haha = hehe.split(",");
                 //console.log(response.result.contexts[3]);
                 var denom = haha[2];
@@ -211,10 +224,10 @@ router.post('/chat',
                 Kodeawal.find({nomor: phone}).distinct('operator')
                 .then((operatorKode) => {
                     var operator = operatorKode[0];
-                    //cari price yang sedang pending
-                    var date1month = new Date();
-                    date1month.setTime(date1month.getTime() - (1000 * 60 * 60 * 24 * 30));
-                    Transaksi.find({status: {$in: ['Pending', 'Success']}, date:{$gte: date1month}}).distinct('price')
+                    var date1monthago = new Date();
+                    date1monthago.setTime(date1month.getTime() - (1000 * 60 * 60 * 24 * 30));
+                    //cari price yang mungkin ada dlm list mutasi selama periode sebulan
+                    Transaksi.find({status: {$in: ['Pending', 'Success']}, date:{$gte: date1monthago}}).distinct('price')
                     .then((HargaPending) => {
                         //console.log(HargaPending);
                         //cari price berdasarkan req.body.denom dan operator
@@ -254,7 +267,7 @@ router.post('/chat',
                                     let hari = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
                                     let bulan = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
                                     console.log(TransaksiSukses);
-                                    res.send("Pembelian "+ operator+ " sebanyak " + denom + " untuk "+ nomor +" dengan "+ bayar+ " sejumlah Rp " + uniqprice + ",00. berhasil. Harap melakukan transfer ke rekening BNI berikut: 0427222248 (a.n Muhammad Habibullah) paling lambat pukul " + date3hour.getHours() + "." + date3hour.getMinutes() + " hari " + hari[date3hour.getDay()] + ", " + date3hour.getDate() + " " + bulan[date3hour.getMonth()] + " " + date3hour.getFullYear() + ". Mohon transfer sesuai dengan jumlah transfer agar dapat diproses secara otomatis. Jika terjadi kesalahan jumlah transfer mohon segera hubungi admin: 087859050455" + "*n");
+                                    res.send("Pembelian "+ operator+ " sebanyak " + denom + " untuk "+ nomor +" dengan "+ bayar+ " sejumlah Rp " + uniqprice + ",00. berhasil. Harap melakukan transfer ke rekening BNI berikut: 0427222248 (a.n Muhammad Habibullah) paling lambat pukul " + date3hour.getHours() + "." + date3hour.getMinutes() + " hari " + hari[date3hour.getDay()] + ", " + date3hour.getDate() + " " + bulan[date3hour.getMonth()] + " " + date3hour.getFullYear() + ". Mohon transfer sesuai dengan jumlah transfer agar dapat diproses secara otomatis." + "*n");
                                 }) 
                                 .catch((err) => {
                                     console.log(err);
@@ -278,6 +291,14 @@ router.post('/chat',
                 res.send('Maaf! Terdapat error GET kode Operator');
             });  
             /////%@#@#$@#$
+            } else if (req.body.text == 'reset') {
+                req.session.destroy(function(err) {
+                    if(err) {
+                        console.log(err);
+                    } else {
+                        res.redirect('/');
+                    }
+                });
             }
             else {
             //console.log(response.result.contexts[0].name);
