@@ -252,8 +252,9 @@ router.post('/chat',
                                 transaksi.save()
                                 .then((TransaksiSukses) => {
                                     let hari = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+                                    let bulan = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
                                     console.log(TransaksiSukses);
-                                    res.send("Pembelian "+ operator+ " sebanyak " + denom + " untuk "+ nomor +" dengan "+ bayar+ " sejumlah Rp " + uniqprice + ",00. berhasil. Harap melakukan transfer ke rekening BNI berikut: 0427222248 (a.n Muhammad Habibullah) paling lambat pukul " + date3hour.getHours + "." + date3hour.getMinutes() + " hari " + hari[date3hour.getDay()] + ", " + date3hour.getDate() + " " + date3hour.getMonth() + " " + date3hour.getFullYear() + " " + "*n");
+                                    res.send("Pembelian "+ operator+ " sebanyak " + denom + " untuk "+ nomor +" dengan "+ bayar+ " sejumlah Rp " + uniqprice + ",00. berhasil. Harap melakukan transfer ke rekening BNI berikut: 0427222248 (a.n Muhammad Habibullah) paling lambat pukul " + date3hour.getHours() + "." + date3hour.getMinutes() + " hari " + hari[date3hour.getDay()] + ", " + date3hour.getDate() + " " + bulan[date3hour.getMonth()] + " " + date3hour.getFullYear() + " " + "*n");
                                 }) 
                                 .catch((err) => {
                                     console.log(err);
