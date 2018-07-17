@@ -132,7 +132,7 @@ function updatePembayaran(){
         console.log("gagal mendapat data transaksi yg pending pada database. cek konfigurasi database");
     })
 }
-updatePembayaran();
+//updatePembayaran();
 setInterval(updatePembayaran, 300000); //req setiap x / 1000 detik
 
 const uuidv1 = require('uuid/v1');
@@ -143,7 +143,143 @@ setInterval(
     }
     , 120000);
 
+function konfirmasiPembelian(denom, nomer, bayar, callback) {
+    cekKodeAwal(nomer, (operator) => {
+        cekHarga(denom, operator, (harga) => {
+            let pesanKonfirmasi = "Pembelian "+ operator+ " sejumlah " + denom + " untuk "+ nomer +" dengan "+ bayar+ " sejumlah Rp " + harga + ",00. Apakah anda yakin ? (y/n)*yn";
+            return callback(pesanKonfirmasi);
+        })
+    })
+}
+
+function prosesPembelian(denom, nomer, bayar, callback) {
+    cekKodeAwal(nomer, (operator) => {
+        cekHarga(denom, operator, (harga) => {
+            cekTransaksiPending((arrHargaPending) => {
+                generateKodeBayar(arrHargaPending, harga, (uniqprice) => {
+                    if (uniqprice == 50) {
+                        return callback('Maaf! Server sedang sibuk menangani pembelian. Silahkan coba beberapa saat lagi.'); //random number tidak mungkin membuat kode unik setelah 50x loop
+                    } else {
+                        simpanTransaksi(denom, nomer, bayar, operator, uniqprice, (pesanSukses) => {
+                            return callback(pesanSukses);
+                        })
+                    }
+                })
+            })
+        })
+    })
+}
+
+function cekKodeAwal(nomer, callback) {
+    threeDigit(nomer, (tigadigit) => {
+        Kodeawal.find({nomor: tigadigit}).distinct('operator')
+        .then((kodeOperator) => {
+            return callback(kodeOperator[0]);
+        })
+        .catch((err) => {
+            console.log(err);
+            return err;
+        })
+    })
+}
+
+function threeDigit(nomer, callback) {
+    if (nomer.substring(0, 3) == "+62") {
+        return callback(nomer.substring(3, 6));
+    } else if (nomer.substring(0, 2) == "62") {
+        return callback(nomer.substring(2, 5));
+    } else if (nomer.substring(0, 1) == "0") {
+        return callback(nomer.substring(1, 4));
+    }
+}
+
+function cekHarga(denom, operator, callback) {
+    Harga.find({denom: denom, operator: operator}).distinct('price')
+    .then((hargaPulsa) => {
+        return callback(hargaPulsa[0]);
+    })
+    .catch((err) => {
+        console.log(err);
+        return err;
+    })
+}
+
+function cekTransaksiPending(callback) {
+    let date1monthago = new Date();
+    date1monthago.setTime(date1monthago.getTime() - (1000 * 60 * 60 * 24 * 30));
+    //cari price yang mungkin ada dlm list crawler cek mutasi selama periode sebulan
+    Transaksi.find({status: {$in: ['Pending', 'Success']}, date:{$gte: date1monthago}}).distinct('price')
+    .then((arrHargaPending) => {
+        return callback(arrHargaPending);
+    })
+    .catch((err) => {
+        console.log(err);
+        return err;
+    })
+}
+
+function generateKodeBayar(arrHargaPending, harga, callback) {
+    let i = 0; //untuk iterate loop
+    let rand; //untuk generate angka random
+    let uniqprice; //untuk simpan variabel harga unik
+    let cekuniq; //unit variable boolean pengecek harga yang unik
+
+    do {
+        rand = Math.floor((Math.random() * 50) + 1); //generate random number antara 1-50
+        uniqprice = harga + rand; //tambahkan price dengan random number
+        cekuniq = arrHargaPending.indexOf(uniqprice); // cek harga unik pada array object
+        i++;
+        if (i==50) { //harga tidak mungkin unik, database penuh dgn kode unik
+            uniqprice = 50;
+            break;
+        }
+        if (cekuniq != -1) { //ada harga yang kembar
+            continue;
+        } else if (cekuniq == -1) { //harga unik
+            break;
+        }
+    } while (true);
+    return callback(uniqprice);
+}
+
+function simpanTransaksi(denom, nomor, bayar, operator, uniqprice, callback) {
+    let date3hour = new Date();
+    date3hour.setTime(date3hour.getTime() + (1000 * 10740)); //selisih 3 jam - 1 menit
+    
+    //simpan data harga ke dalam request yang akan disimpan ke dalam database
+    const transaksi = new Transaksi();
+    transaksi.operator = operator;
+    transaksi.price = uniqprice;
+    transaksi.date = date3hour;
+    
+    //dari dialogflow
+    transaksi.phone = nomor;
+    transaksi.denom = denom;
+    transaksi.channel = bayar;
+    transaksi.save()
+    .then((TransaksiSukses) => {
+        let hari = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+        let bulan = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+        let jam = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"];
+        let menit = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59"];
+        console.log(TransaksiSukses);
+        return callback("Pembelian "+ operator+ " sebanyak " + denom + " untuk "+ nomor +" dengan "+ bayar+ " sejumlah Rp " + uniqprice + ",00. berhasil. Harap melakukan transfer ke rekening BNI berikut: 0427222248 (a.n Muhammad Habibullah) paling lambat pukul " + jam[date3hour.getHours()] + "." + menit[date3hour.getMinutes()] + " hari " + hari[date3hour.getDay()] + ", " + date3hour.getDate() + " " + bulan[date3hour.getMonth()] + " " + date3hour.getFullYear() + ". Mohon transfer sesuai dengan jumlah transfer agar dapat diproses secara otomatis." + "*n");
+    }) 
+    .catch((err) => {
+        console.log(err);
+        return callback('Maaf! Terdapat error POST data transaksi ke database');
+    }); 
+}
 //////////////////////////////////////////////////////////
+router.get('/listHarga/:operator', (req, res) => {
+    Harga.find({operator: req.params.operator}).sort({'denom':1})
+    .then((ListHargaOperator) => {
+        res.json(ListHargaOperator);
+    })
+    .catch(() => {
+        res.send("Maaf! Terdapat error.");
+    })
+});
 
 const projectId = 'masbay-5e88e'; //https://dialogflow.com/docs/agents#settings
 const sessionId = 'quickstart-session-id';
@@ -179,19 +315,11 @@ router.post('/chat',
                var nomer = haha[1];
                //var operator = response.result.contexts[3].parameters.operator[0];
                var bayar = haha[3];
-               var phone = nomer.substring(0, 4);
                 console.log(denom,nomer,bayar);
-                Kodeawal.find({nomor: phone}).distinct('operator')
-                .then((operatorKode) => {
-                //var operator1 = operator.toLowerCase();
-                    Harga.find({denom: denom, operator: operatorKode[0]})
-                    .then((hargaPulsa) => {
-                    var price = hargaPulsa[0].price;    
-                    res.send("Pembelian "+ operatorKode[0]+ " sejumlah " + denom + " untuk "+ nomer +" dengan "+ bayar+ " sejumlah Rp " + price + ",00. Apakah anda yakin ? (y/n)*yn");
-                   // bay = false;
-                })
-            })          
-                
+                ////rapikan
+                konfirmasiPembelian(denom, nomer, bayar, (pesan) => {
+                    res.send(pesan);
+                });
             }
             else if (hihi != -1) {
                 var haha = hehe.split(",");
@@ -200,87 +328,9 @@ router.post('/chat',
                var nomor = haha[1];
                //var operator = response.result.contexts[3].parameters.operator[0];
                var bayar = haha[3];
-                ////inputTransaksi*^##^@@&(&@#)
-                console.log(denom,nomor,bayar);
-                //ambil data transaksi price yang sedang dalam proses (Pending) dari database
-                //console.log(req.body);
-
-                //cari kode operator berdasarkan input nomor handphone
-                //var phone = req.body.phone;
-                var phone = nomor.substring(0, 4);
-                //console.log(typeof phone);
-                Kodeawal.find({nomor: phone}).distinct('operator')
-                .then((operatorKode) => {
-                    var operator = operatorKode[0];
-                    var date1monthago = new Date();
-                    date1monthago.setTime(date1monthago.getTime() - (1000 * 60 * 60 * 24 * 30));
-                    //cari price yang mungkin ada dlm list mutasi selama periode sebulan
-                    Transaksi.find({status: {$in: ['Pending', 'Success']}, date:{$gte: date1monthago}}).distinct('price')
-                    .then((HargaPending) => {
-                        //console.log(HargaPending);
-                        //cari price berdasarkan req.body.denom dan operator
-                        Harga.find({denom: denom, operator: operator})
-                        .then((price) => {
-                            //generate harga yang unik untuk setiap transaksi yang pending
-                            //pastikan tidak ada data price yang kembar di dalam database
-                            //ulangi generate harga sampai didapatkan harga yang unik dengan data harga di database
-                            let i = 0;
-                            do {
-                                let rand = Math.floor((Math.random() * 50) + 1); //generate random number antara 1-50
-                                var uniqprice = price[0].price + rand; //tambahkan price dengan random number
-                                let cekuniq = HargaPending.indexOf(uniqprice); // cek harga unik pada array object
-                                i++;
-                                if (cekuniq != -1) { //ada harga yang kembar
-                                    continue;
-                                } else if ((cekuniq == -1) || (i==50)) { //harga unik atau harga sudah tidak mungkin unik
-                                    break;
-                                }
-                            } while (true);
-                            if (i!= 50) {
-                                var date3hour = new Date();
-                                date3hour.setTime(date3hour.getTime() + (1000 * 10740)); //selisih 3 jam - 1 menit
-                                
-                                //simpan data harga ke dalam request yang akan disimpan ke dalam database
-                                const transaksi = new Transaksi();
-                                transaksi.operator = operator;
-                                transaksi.price = uniqprice;
-                                transaksi.date = date3hour;
-                                
-                                //dari dialogflow
-                                transaksi.phone = nomor;
-                                transaksi.denom = denom;
-                                transaksi.channel = bayar;
-                                transaksi.save()
-                                .then((TransaksiSukses) => {
-                                    let hari = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
-                                    let bulan = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
-                                    let jam = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"];
-                                    let menit = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59"];
-                                    console.log(TransaksiSukses);
-                                    res.send("Pembelian "+ operator+ " sebanyak " + denom + " untuk "+ nomor +" dengan "+ bayar+ " sejumlah Rp " + uniqprice + ",00. berhasil. Harap melakukan transfer ke rekening BNI berikut: 0427222248 (a.n Muhammad Habibullah) paling lambat pukul " + jam[date3hour.getHours()] + "." + menit[date3hour.getMinutes()] + " hari " + hari[date3hour.getDay()] + ", " + date3hour.getDate() + " " + bulan[date3hour.getMonth()] + " " + date3hour.getFullYear() + ". Mohon transfer sesuai dengan jumlah transfer agar dapat diproses secara otomatis." + "*n");
-                                }) 
-                                .catch((err) => {
-                                    console.log(err);
-                                    res.send('Maaf! Terdapat error POST data transaksi ke database');
-                                }); 
-                            } else {
-                                res.send('Maaf! Server sedang sibuk menangani pembelian. Silahkan coba beberapa saat lagi.'); //random number tidak mungkin membuat kode unik setelah 50x loop
-                            }
-                        })
-                        .catch((err) => {
-                            console.log(err);
-                            res.send('Maaf! Server tidak menemukan harga untuk permintaan pembalian pulsa dengan nominal tsb.');
-                        });  
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                        res.send('Maaf! Terdapat error GET harga pending');
-                    });
+                prosesPembelian(denom, nomor, bayar, (pesan) => {
+                    res.send(pesan);
                 })
-            .catch(() => {
-                res.send('Maaf! Terdapat error GET kode Operator');
-            });  
-            /////%@#@#$@#$
             }
             else {
             //console.log(response.result.contexts[0].name);
