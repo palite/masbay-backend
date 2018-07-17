@@ -315,31 +315,31 @@ router.post('/chat',
         });
         //menerima input dari api.ai
         request.on('response', function(response) {
-            var hehe = response.result.fulfillment.speech;
-           var hoho = hehe.indexOf("*ok*");
-           var hihi = hehe.indexOf("*wk*");
-           //console.log(typeof haha);
+            var respond = response.result.fulfillment.speech;
+           var kode1 = respond.indexOf("*ok*");
+           var kode2 = respond.indexOf("*wk*");
+           //console.log(typeof arrayrespond);
             //kondisi saat rincian pembelian
-            if (hoho != -1) {
-                var haha = hehe.split(",");
+            if (kode1 != -1) {
+                var arrayrespond = respond.split(",");
                 //console.log(response.result.contexts[3]);
-                var denom = haha[2];
-               var nomer = haha[1];
+                var denom = arrayrespond[2];
+               var nomer = arrayrespond[1];
                //var operator = response.result.contexts[3].parameters.operator[0];
-               var bayar = haha[3];
+               var bayar = arrayrespond[3];
                 console.log(denom,nomer,bayar);
                 ////rapikan
                 konfirmasiPembelian(denom, nomer, bayar, (pesan) => {
                     res.send(pesan);
                 });
             }
-            else if (hihi != -1) {
-                var haha = hehe.split(",");
+            else if (kode2 != -1) {
+                var arrayrespond = respond.split(",");
                 //console.log(response.result.contexts[3]);
-                var denom = haha[2];
-               var nomor = haha[1];
+                var denom = arrayrespond[2];
+               var nomor = arrayrespond[1];
                //var operator = response.result.contexts[3].parameters.operator[0];
-               var bayar = haha[3];
+               var bayar = arrayrespond[3];
                 prosesPembelian(denom, nomor, bayar, (pesan) => {
                     res.send(pesan);
                 })
