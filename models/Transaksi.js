@@ -34,7 +34,11 @@ const SkemaTransaksi = new mongoose.Schema({
         type: String,
         default: 'Transfer', //diganti kalau sudah mau develop pembayaran via saldo
         trim: true,
-    }
+    },
+    deviceId: {
+        type: String,
+        trim: true,
+    },
 });
 
 module.exports = mongoose.model('Transaksi', SkemaTransaksi);
