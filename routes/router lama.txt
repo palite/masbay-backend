@@ -1,16 +1,6 @@
 router terpisah :
 
 
-router.get('/riwayatTransaksi', (req, res) => {
-    Transaksi.find()
-    .then((RiwayatTransaksi) => {
-        res.json(RiwayatTransaksi);
-    })
-    .catch(() => {
-        res.send('Maaf! Terdapat error.');
-    });
-});
-
 router.get('/listHarga', (req, res) => {
     Harga.find().sort({'operator':1, 'denom':1})
     .then((ListHarga) => {
