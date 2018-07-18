@@ -13,6 +13,7 @@ require('../controllers/timerController');
 
 router.get('/listHarga/:operator', harga_controller.listHarga);
 router.get('/riwayatTransaksi/:nomor', transaksi_controller.riwayatTransaksi);
+router.get('/transaksiTerakhir/:nomor', transaksi_controller.transaksiTerakhir);
 router.post('/chat', chat_controller.chat);
 router.post('/talk', chat_controller.talk);
 

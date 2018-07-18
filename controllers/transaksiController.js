@@ -116,3 +116,13 @@ exports.riwayatTransaksi = function (req, res) {
         res.send('Maaf! Terdapat error.');
     })
 }
+
+exports.transaksiTerakhir = function (req, res) {
+    Transaksi.findOne({phone: req.params.nomor}).sort('-date')
+    .then((RiwayatTransaksi) => {
+        res.send(RiwayatTransaksi.denom + " " + RiwayatTransaksi.channel + " " + RiwayatTransaksi.phone );
+    })
+    .catch(() => {
+        res.send('Maaf! Terdapat error.');
+    })
+}
