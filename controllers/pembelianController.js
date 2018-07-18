@@ -2,15 +2,6 @@ var harga_controller = require('../controllers/hargaController');
 var kodeawal_controller = require('../controllers/kodeAwalController');
 var transaksi_controller = require('../controllers/transaksiController');
 
-
-function dataPembelian(denom, nomer, callback) {
-    kodeawal_controller.cekKodeAwal(nomer, (operator) => {
-        harga_controller.cekHarga(denom, operator, (harga) => {
-            return callback(harga);
-        })
-    })
-}
-
 function generateKodeBayar(arrHargaPending, harga, callback) {
     let i = 0; //untuk iterate loop
     let rand; //untuk generate angka random
@@ -36,23 +27,27 @@ function generateKodeBayar(arrHargaPending, harga, callback) {
 }
 
 exports.konfirmasiPembelian = function (denom, nomer, bayar, callback) {
-    dataPembelian(denom, nomer, (operator) => {
-        let pesanKonfirmasi = "Pembelian "+ operator+ " sejumlah " + denom + " untuk "+ nomer +" dengan "+ bayar+ " sejumlah Rp " + harga + ",00. Apakah anda yakin ? (y/n)*yn";
-            return callback(pesanKonfirmasi);
+    kodeawal_controller.cekKodeAwal(nomer, (operator) => {
+        harga_controller.cekHarga(denom, operator, (harga) => {
+            let pesanKonfirmasi = "Pembelian "+ operator+ " sejumlah " + denom + " untuk "+ nomer +" dengan "+ bayar+ " sejumlah Rp " + harga + ",00. Apakah anda yakin ? (y/n)*yn";
+                return callback(pesanKonfirmasi);
+        })
     })
 }
 
 exports.prosesPembelian = function (denom, nomer, bayar, callback) {
-    dataPembelian(denom, nomer, (operator) => {
-        transaksi_controller.cekTransaksiPending((arrHargaPending) => {
-            generateKodeBayar(arrHargaPending, harga, (uniqprice) => {
-                if (uniqprice == 50) {
-                    return callback('Maaf! Server sedang sibuk menangani pembelian. Silahkan coba beberapa saat lagi.'); //random number tidak mungkin membuat kode unik setelah 50x loop
-                } else {
-                    transaksi_controller.simpanTransaksi(denom, nomer, bayar, operator, uniqprice, (pesanSukses) => {
-                        return callback(pesanSukses);
-                    })
-                }
+    kodeawal_controller.cekKodeAwal(nomer, (operator) => {
+        harga_controller.cekHarga(denom, operator, (harga) => {
+            transaksi_controller.cekTransaksiPending((arrHargaPending) => {
+                generateKodeBayar(arrHargaPending, harga, (uniqprice) => {
+                    if (uniqprice == 50) {
+                        return callback('Maaf! Server sedang sibuk menangani pembelian. Silahkan coba beberapa saat lagi.'); //random number tidak mungkin membuat kode unik setelah 50x loop
+                    } else {
+                        transaksi_controller.simpanTransaksi(denom, nomer, bayar, operator, uniqprice, (pesanSukses) => {
+                            return callback(pesanSukses);
+                        })
+                    }
+                })
             })
         })
     })
