@@ -5,7 +5,11 @@ const Harga = mongoose.model('Harga');
 exports.cekHarga = function (denom, operator, callback) {
     Harga.find({denom: denom, operator: operator}).distinct('price')
     .then((hargaPulsa) => {
-        return callback(hargaPulsa[0]);
+        if (hargaPulsa[0]) {
+            return callback(hargaPulsa[0]);
+        } else {
+            return callback(false);
+        }
     })
     .catch((err) => {
         console.log(err);

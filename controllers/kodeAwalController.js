@@ -9,19 +9,29 @@ function threeDigit(nomer, callback) {
         return callback(nomer.substring(2, 5));
     } else if (nomer.substring(0, 1) == "0") {
         return callback(nomer.substring(1, 4));
+    } else {
+        return callback(false);
     }
 }
 
 exports.cekKodeAwal = function (nomer, callback) {
     threeDigit(nomer, (tigadigit) => {
-        Kodeawal.find({nomor: tigadigit}).distinct('operator')
-        .then((kodeOperator) => {
-            return callback(kodeOperator[0]);
-        })
-        .catch((err) => {
-            console.log(err);
-            return err;
-        })
+        if (tigadigit) {
+            Kodeawal.find({nomor: tigadigit}).distinct('operator')
+            .then((kodeOperator) => {
+                if (kodeOperator) {
+                    return callback(kodeOperator[0]);
+                }  else {
+                    return callback(false);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+                return err;
+            })
+        } else {
+            return callback(false);
+        }
     })
 }
 

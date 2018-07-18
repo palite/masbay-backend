@@ -56,6 +56,56 @@ function pesanTransaksiSukses(denom, nomor, bayar, operator, uniqprice, date3hou
     return callback("Pembelian "+ operator+ " sebanyak " + denom + " untuk "+ nomor +" dengan "+ bayar+ " sejumlah Rp " + uniqprice + ",00. berhasil. Harap melakukan transfer ke rekening BNI berikut: 0427222248 (a.n Muhammad Habibullah) paling lambat pukul " + jam[date3hour.getHours()] + "." + menit[date3hour.getMinutes()] + " hari " + hari[date3hour.getDay()] + ", " + date3hour.getDate() + " " + bulan[date3hour.getMonth()] + " " + date3hour.getFullYear() + ". Mohon transfer sesuai dengan jumlah transfer agar dapat diproses secara otomatis." + "*n");
 }
 
+exports.suksesIsiPulsa = function (paidTransaction, callback) {
+    Transaksi.update({_id : paidTransaction[0]._id}, {status: 'Success'})
+    .then((SuksesIsiPulsa) => {
+        //console.log(SuksesIsiPulsa);
+        let PesanSukses = "Pengisian pulsa " + paidTransaction[0].phone + " sukses!" ;
+        return callback(PesanSukses);
+    })
+    .catch((err) => {
+        console.log(err);
+        let PesanError = "Pulsa mungkin sudah terisi namun pencatatan transaksi gagal. Nomor HP: " . pt[0].phone;
+        return callback(PesanError);
+    })
+}
+
+exports.cekTransaksiPending = function (callback) {
+    Transaksi.find({status:'Pending'}).distinct('price')
+    .then((arrHargaPending) => {
+        return callback(arrHargaPending);
+    })
+    .catch((err) => {
+        console.log('gagal mendapat data transaksi yg pending pada database. cek konfigurasi database');
+        return callback(err);
+    })
+}
+
+exports.ambilTransaksiTerbayar = function (harga, callback) {
+    Transaksi.find({status:'Pending', price: harga})
+    .then((paidTransaction) => {
+        return callback(paidTransaction);
+    })
+    .catch((err) => {
+        console.log("Pencarian data transaksi dari harga yang ditemukan gagal! Mungkin ada data yg tidak sinkron pada database")
+        return callback(err);
+    })
+}
+
+
+exports.updateStatusTransaksi = function() {
+    let dateNow = new Date();
+    Transaksi.updateMany({status:'Pending', date:{$lte: dateNow}}, {status:'Expired'})
+    .then((UpdatedTransaksi) => {
+        //console.log(UpdatedTransaksi);
+    })
+    .catch((err) => {
+        console.log(err);
+        console.log('Error update status transaksi');
+    });
+}
+
+
 exports.riwayatTransaksi = function (req, res) {
     Transaksi.find({phone: req.params.nomor})
     .then((RiwayatTransaksi) => {
