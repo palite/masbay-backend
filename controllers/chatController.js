@@ -62,3 +62,37 @@ exports.chat = function (req, res) {
     request.end();
     
 }
+
+//Akses ke Wit.Ai
+
+const {Wit, log} = require('node-wit');
+const client = new Wit({
+   accessToken: process.env.TOKENWIT,
+   //loggers: new log.loggers(log.DEBUG)
+});
+
+exports.talk = function (req, res) {
+    var aa = req.body.text;
+    client.message(aa, {})
+    .then((data) => {
+        res.send(JSON.stringify(data));
+        //console.log(JSON.stringify(data));
+        //var son = JSON.parse(data);
+        /* if (data.entities.jumlah_denom != null) {
+            var nom = data.entities.jumlah_denom[0].value;
+            var k = true;}
+        else {
+            var k = false;
+        }
+        if (data.entities.type_pulsa != null)  {
+            var ope = data.entities.type_pulsa[0].value;
+            var l = true;
+        }
+        else {
+                var l = false;
+        }
+        if (k && l) {res.send(nom+ope);}
+        if (l == false && k) {res.send(nom+"operator tidak diketahui");}
+        if (l && k == false) {res.send(ope+"denom tidak ada");} */
+    })       
+}
