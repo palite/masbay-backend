@@ -14,7 +14,7 @@ const uuidv1 = require('uuid/v1');
 exports.chat = function (req, res) {
     let bay = true;
     var apiai = require('apiai');
-    if (req.body.text == "reset") {
+    if (req.body.text == "reset" || req.body.text == "Reset") {
         res.send("Mau beli apa hari ini?");
         var sesi = uuidv1();
         Session.findOneAndUpdate({deviceId: req.body.deviceId}, {$set:{session:sesi}},{upsert:true,new:true}, function(err,doc){
