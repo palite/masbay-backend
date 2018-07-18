@@ -28,10 +28,18 @@ function generateKodeBayar(arrHargaPending, harga, callback) {
 
 exports.konfirmasiPembelian = function (denom, nomer, bayar, callback) {
     kodeawal_controller.cekKodeAwal(nomer, (operator) => {
-        harga_controller.cekHarga(denom, operator, (harga) => {
-            let pesanKonfirmasi = "Pembelian "+ operator+ " sejumlah " + denom + " untuk "+ nomer +" dengan "+ bayar+ " sejumlah Rp " + harga + ",00. Apakah anda yakin ? (y/n)*yn";
-                return callback(pesanKonfirmasi);
-        })
+        if (operator) {
+            harga_controller.cekHarga(denom, operator, (harga) => {
+                if (harga) {
+                    let pesanKonfirmasi = "Pembelian "+ operator+ " sejumlah " + denom + " untuk "+ nomer +" dengan "+ bayar+ " sejumlah Rp " + harga + ",00. Apakah anda yakin ? (y/n)*yn";
+                    return callback(pesanKonfirmasi);
+                } else {
+                    return callback('Input nominal salah! Cari harga yang tersedia!');
+                }
+            })
+        } else {
+            return callback('Input nomor salah!');
+        }
     })
 }
 
