@@ -43,7 +43,7 @@ exports.konfirmasiPembelian = function (denom, nomer, bayar, callback) {
     })
 }
 
-exports.prosesPembelian = function (denom, nomer, bayar, callback) {
+exports.prosesPembelian = function (denom, nomer, bayar, deviceId, callback) {
     kodeawal_controller.cekKodeAwal(nomer, (operator) => {
         harga_controller.cekHarga(denom, operator, (harga) => {
             transaksi_controller.cekTransaksiPending((arrHargaPending) => {
@@ -51,7 +51,7 @@ exports.prosesPembelian = function (denom, nomer, bayar, callback) {
                     if (uniqprice == 50) {
                         return callback('Maaf! Server sedang sibuk menangani pembelian. Silahkan coba beberapa saat lagi.'); //random number tidak mungkin membuat kode unik setelah 50x loop
                     } else {
-                        transaksi_controller.simpanTransaksi(denom, nomer, bayar, operator, uniqprice, (pesanSukses) => {
+                        transaksi_controller.simpanTransaksi(denom, nomer, bayar, operator, uniqprice, deviceId, (pesanSukses) => {
                             return callback(pesanSukses);
                         })
                     }

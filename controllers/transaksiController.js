@@ -16,7 +16,7 @@ exports.cekTransaksiPending = function (callback) {
     })
 }
 
-exports.simpanTransaksi = function (denom, nomor, bayar, operator, uniqprice, callback) {
+exports.simpanTransaksi = function (denom, nomor, bayar, operator, uniqprice, deviceId, callback) {
     tenggatBayar((date3hour) => {
         //simpan data harga ke dalam request yang akan disimpan ke dalam database
         const transaksi = new Transaksi();
@@ -28,6 +28,7 @@ exports.simpanTransaksi = function (denom, nomor, bayar, operator, uniqprice, ca
         transaksi.phone = nomor;
         transaksi.denom = denom;
         transaksi.channel = bayar;
+        transaksi.deviceId = deviceId;
         transaksi.save()
         .then((TransaksiSukses) => {
             pesanTransaksiSukses(denom, nomor, bayar, operator, uniqprice, date3hour, (pesan) => {

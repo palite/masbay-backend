@@ -59,7 +59,7 @@ exports.chat = function (req, res) {
                         var nomor = arrayrespond[1];
                         //var operator = response.result.contexts[3].parameters.operator[0];
                         var bayar = arrayrespond[3];
-                        pembelian_controller.prosesPembelian(denom, nomor, bayar, (pesan) => {
+                        pembelian_controller.prosesPembelian(denom, nomor, bayar, req.body.deviceId, (pesan) => {
                             res.send(pesan);
                         })
                         var sesiupdate = uuidv1();
