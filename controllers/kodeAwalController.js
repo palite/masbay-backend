@@ -10,13 +10,13 @@ function threeDigit(nomer, callback) {
     } else if (nomer.substring(0, 1) == "0") {
         return callback(nomer.substring(1, 4));
     } else {
-        return callback('999');
+        return callback(false);
     }
 }
 
 exports.cekKodeAwal = function (nomer, callback) {
     threeDigit(nomer, (tigadigit) => {
-        if (tigadigit != '999') {
+        if (tigadigit) {
             Kodeawal.find({nomor: tigadigit}).distinct('operator')
             .then((kodeOperator) => {
                 if (kodeOperator) {
