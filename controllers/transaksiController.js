@@ -16,7 +16,7 @@ exports.cekTransaksiPending = function (callback) {
     })
 }
 
-exports.simpanTransaksi = function (denom, nomor, bayar, operator, uniqprice, deviceId, callback) {
+exports.simpanTransaksi = function (denom, nomor, bayar, operator, harga, uniqprice, deviceId, callback) {
     tenggatBayar((date3hour) => {
         //simpan data harga ke dalam request yang akan disimpan ke dalam database
         const transaksi = new Transaksi();
@@ -31,7 +31,7 @@ exports.simpanTransaksi = function (denom, nomor, bayar, operator, uniqprice, de
         transaksi.deviceId = deviceId;
         transaksi.save()
         .then((TransaksiSukses) => {
-            pesanTransaksiSukses(denom, nomor, bayar, operator, uniqprice, date3hour, (pesan) => {
+            pesanTransaksiSukses(denom, nomor, bayar, operator, harga, uniqprice, date3hour, (pesan) => {
                 return callback(pesan);
             })
         }) 
@@ -48,13 +48,13 @@ function tenggatBayar(callback) {
     return callback(date3hour);
 }
 
-function pesanTransaksiSukses(denom, nomor, bayar, operator, uniqprice, date3hour, callback) {
+function pesanTransaksiSukses(denom, nomor, bayar, operator, harga, uniqprice, date3hour, callback) {
     let hari = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
     let bulan = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
     let jam = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"];
     let menit = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59"];
 
-    return callback("Pembelian "+ operator+ " sebanyak " + denom + " untuk "+ nomor +" dengan "+ bayar+ " sejumlah Rp " + uniqprice + ",00. berhasil. Harap melakukan transfer ke rekening BNI berikut: 0427222248 (a.n Muhammad Habibullah) paling lambat pukul " + jam[date3hour.getHours()] + "." + menit[date3hour.getMinutes()] + " hari " + hari[date3hour.getDay()] + ", " + date3hour.getDate() + " " + bulan[date3hour.getMonth()] + " " + date3hour.getFullYear() + ". Mohon transfer sesuai dengan jumlah transfer agar dapat diproses secara otomatis." + "*n");
+    return callback("Pembelian "+ operator+ " sebanyak " + denom + " untuk "+ nomor +" dengan "+ bayar+ " sejumlah Rp " + uniqprice + ",00. (Diskon Rp " + (harga-uniqprice) + ") berhasil. Harap melakukan transfer ke rekening BNI berikut: 0427222248 (a.n Muhammad Habibullah) paling lambat pukul " + jam[date3hour.getHours()] + "." + menit[date3hour.getMinutes()] + " hari " + hari[date3hour.getDay()] + ", " + date3hour.getDate() + " " + bulan[date3hour.getMonth()] + " " + date3hour.getFullYear() + ". Mohon transfer sesuai dengan jumlah transfer agar dapat diproses secara otomatis." + "*n");
 }
 
 exports.suksesIsiPulsa = function (paidTransaction, callback) {

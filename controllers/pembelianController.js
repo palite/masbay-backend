@@ -2,19 +2,19 @@ var harga_controller = require('../controllers/hargaController');
 var kodeawal_controller = require('../controllers/kodeAwalController');
 var transaksi_controller = require('../controllers/transaksiController');
 
-function generateKodeBayar(arrHargaPending, harga, callback) {
+function generateKodeBayar(range, arrHargaPending, harga, callback) {
     let i = 0; //untuk iterate loop
     let rand; //untuk generate angka random
     let uniqprice; //untuk simpan variabel harga unik
     let cekuniq; //unit variable boolean pengecek harga yang unik
 
     do {
-        rand = Math.floor((Math.random() * 50) + 1); //generate random number antara 1-50
-        uniqprice = harga + rand; //tambahkan price dengan random number
+        rand = Math.floor((Math.random() * range) + 1); //generate random number antara 1-range
+        uniqprice = harga - rand; //tambahkan price dengan random number
         cekuniq = arrHargaPending.indexOf(uniqprice); // cek harga unik pada array object
         i++;
-        if (i==50) { //harga tidak mungkin unik, database penuh dgn kode unik
-            uniqprice = 50;
+        if (i==range) { //harga tidak mungkin unik, database penuh dgn kode unik
+            uniqprice = range;
             break;
         }
         if (cekuniq != -1) { //ada harga yang kembar
@@ -47,11 +47,11 @@ exports.prosesPembelian = function (denom, nomer, bayar, deviceId, callback) {
     kodeawal_controller.cekKodeAwal(nomer, (operator) => {
         harga_controller.cekHarga(denom, operator, (harga) => {
             transaksi_controller.cekTransaksiPending((arrHargaPending) => {
-                generateKodeBayar(arrHargaPending, harga, (uniqprice) => {
+                generateKodeBayar(50, arrHargaPending, harga, (uniqprice) => {
                     if (uniqprice == 50) {
                         return callback('Maaf! Server sedang sibuk menangani pembelian. Silahkan coba beberapa saat lagi.'); //random number tidak mungkin membuat kode unik setelah 50x loop
                     } else {
-                        transaksi_controller.simpanTransaksi(denom, nomer, bayar, operator, uniqprice, deviceId, (pesanSukses) => {
+                        transaksi_controller.simpanTransaksi(denom, nomer, bayar, operator, harga, uniqprice, deviceId, (pesanSukses) => {
                             return callback(pesanSukses);
                         })
                     }
@@ -60,3 +60,4 @@ exports.prosesPembelian = function (denom, nomer, bayar, deviceId, callback) {
         })
     })
 }
+
