@@ -51,7 +51,7 @@ exports.prosesPembelian = function (denom, nomer, bayar, deviceId, callback) {
                     if (uniqprice == 50) {
                         return callback('Maaf! Server sedang sibuk menangani pembelian. Silahkan coba beberapa saat lagi.'); //random number tidak mungkin membuat kode unik setelah 50x loop
                     } else {
-                        transaksi_controller.simpanTransaksi(denom, nomer, bayar, operator, uniqprice, deviceId, (pesanSukses) => {
+                        transaksi_controller.simpanTransaksi(denom, nomer, bayar, operator, harga, uniqprice, deviceId, (pesanSukses) => {
                             return callback(pesanSukses);
                         })
                     }
