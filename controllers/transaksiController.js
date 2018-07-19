@@ -71,17 +71,6 @@ exports.suksesIsiPulsa = function (paidTransaction, callback) {
     })
 }
 
-exports.cekTransaksiPending = function (callback) {
-    Transaksi.find({status:'Pending'}).distinct('price')
-    .then((arrHargaPending) => {
-        return callback(arrHargaPending);
-    })
-    .catch((err) => {
-        console.log('gagal mendapat data transaksi yg pending pada database. cek konfigurasi database');
-        return callback(err);
-    })
-}
-
 exports.ambilTransaksiTerbayar = function (harga, callback) {
     Transaksi.find({status:'Pending', price: harga})
     .then((paidTransaction) => {
@@ -92,7 +81,6 @@ exports.ambilTransaksiTerbayar = function (harga, callback) {
         return callback(err);
     })
 }
-
 
 exports.updateStatusTransaksi = function() {
     let dateNow = new Date();

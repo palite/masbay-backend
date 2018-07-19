@@ -41,6 +41,7 @@ exports.chat = function (req, res) {
                     //var operator = response.result.contexts[3].parameters.operator[0];
                     var bayar = arrayrespond[3];
                     //console.log(denom,nomer,bayar);
+                    bayar += "BNI";
                     pembelian_controller.konfirmasiPembelian(denom, nomer, bayar, (pesan) => {
                         res.send(pesan);
                     });
