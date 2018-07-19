@@ -1,4 +1,5 @@
 var transaksi_controller = require('../controllers/transaksiController');
+var topup_controller = require('../controllers/topUpController');
 var api_crawler = require('../api/crawler');
 var api_pulsatop = require('../api/pulsatop');
 
@@ -6,44 +7,69 @@ var api_pulsatop = require('../api/pulsatop');
 function updatePembayaran(){
 
     transaksi_controller.cekTransaksiPending(arrTransaksiPending => {
-        api_crawler.crawl(cekmutasi => {
-            if (cekmutasi == 'Kesalahan') {
-                console.log('Crawler gagal!');
-            } else {
-                console.log('Crawler berhasil!');
-                let i;
-                for (i = 0; i < arrTransaksiPending.length; i++) { 
-                    gantiFormat(arrTransaksiPending[i], cekprice => {
-                        //cari rupiah yang pending pada array cek mutasi dr crawler
-                        trfketemu = cekmutasi.search(cekprice)
-                        if (trfketemu == -1) {
-                            //console.log('gagal, coba lagi!');
-                        } else {
-                            //console.log('ketemu!');
-                            //ambil seluruh data dr price tsb
-                            transaksi_controller.ambilTransaksiTerbayar(arrTransaksiPending[i], paidTransaction => {
-                                api_pulsatop.isi(paidTransaction, status => {
-                                    if (status == 'error') {
-                                        console.log("Akses ke API pulsatop gagal");
-                                    } else {
-                                        //update status pembelian ke sukses
-                                        transaksi_controller.suksesIsiPulsa(paidTransaction, (pesan) => {
-                                            console.log(pesan);
-                                        })
-                                    }
+        topup_controller.cekTopUpPending((arrTopUpPending) => {
+            api_crawler.crawl(cekmutasi => {
+                if (cekmutasi == 'Kesalahan') {
+                    console.log('Crawler gagal!');
+                } else {
+                    console.log('Crawler berhasil!');
+                    let i;
+                    for (i = 0; i < arrTransaksiPending.length; i++) { 
+                        gantiFormat(arrTransaksiPending[i], cekprice => {
+                            //cari rupiah yang pending pada array cek mutasi dr crawler
+                            trfketemu = cekmutasi.search(cekprice)
+                            if (trfketemu == -1) {
+                                //console.log('gagal, coba lagi!');
+                            } else {
+                                //console.log('ketemu!');
+                                //ambil seluruh data dr price tsb
+                                transaksi_controller.ambilTransaksiTerbayar(arrTransaksiPending[i], paidTransaction => {
+                                    api_pulsatop.isi(paidTransaction, status => {
+                                        if (status == 'error') {
+                                            console.log("Akses ke API pulsatop gagal");
+                                        } else {
+                                            //update status pembelian ke sukses
+                                            transaksi_controller.suksesIsiPulsa(paidTransaction, (pesan) => {
+                                                console.log(pesan);
+                                            })
+                                        }
+                                    })
                                 })
-                            })
-                        }
-                    })
+                            }
+                        })
+                    }
+                    let j;
+                    for (j = 0; j < arrTopUpPending.length; j++) { 
+                        gantiFormat(arrTopUpPending[j], cekprice => {
+                            //cari rupiah yang pending pada array cek mutasi dr crawler
+                            trfketemu = cekmutasi.search(cekprice)
+                            if (trfketemu == -1) {
+                                //console.log('gagal, coba lagi!');
+                            } else {
+                                //console.log('ketemu!');
+                                //ambil seluruh data dr price tsb
+                                topup_controller.ambilTopUpSaldo(arrTopUpPending[j], paidTopUp => {
+                                    user_controller.isiSaldo(paidTopUp, (pesan) => {
+                                        if (pesan == 'Error') {
+                                            console.log('Isi saldo gagal! Kemungkinan data user tidak sinkron dengan database');
+                                        } else {
+                                            console.log('Isi saldo sukses!');
+                                            console.log(pesan);
+                                        }
+                                    })
+                                })
+                            }
+                        })
+                    }
                 }
-            }
+            })
         })
     })
 }
 
 setInterval(transaksi_controller.updateStatusTransaksi, 30000); //req setiap x/1000 detik
 
-//updatePembayaran();
+updatePembayaran();
 setInterval(updatePembayaran, 300000); //req setiap x / 1000 detik
 
 
@@ -66,6 +92,6 @@ Number.prototype.formatRupiah = function(c, d, t){
 
 function gantiFormat(price, callback) {
     var cekprice = price.formatRupiah(0, ',', '.'); //edit 5850 -> 5.850 
-    cekprice = '' + cekprice + ',00';
+    cekprice = '\\"' + cekprice + ',00\\"';
     return callback(cekprice); //cek array, ada yang sama dengan price / tidak
 }
