@@ -49,14 +49,17 @@ exports.prosesPembelian = function (denom, nomer, bayar, deviceId, callback) {
     kodeawal_controller.cekKodeAwal(nomer, (operator) => {
         harga_controller.cekHarga(denom, operator, (harga) => {
             transaksi_controller.cekTransaksiPending((arrHargaPending) => {
-                generateKodeBayar(50, arrHargaPending, harga, (uniqprice) => {
-                    if (uniqprice == 50) {
-                        return callback('Maaf! Server sedang sibuk menangani pembelian. Silahkan coba beberapa saat lagi.'); //random number tidak mungkin membuat kode unik setelah 50x loop
-                    } else {
-                        transaksi_controller.simpanTransaksi(denom, nomer, bayar, operator, harga, uniqprice, deviceId, (pesanSukses) => {
-                            return callback(pesanSukses);
-                        })
-                    }
+                topup_controller.cekTopUpPending((arrTopUpPending) => {
+                    let arrPending = arrTopUpPending.concat(arrHargaPending);
+                    generateKodeBayar(50, arrPending, harga, (uniqprice) => {
+                        if (uniqprice == 50) {
+                            return callback('Maaf! Server sedang sibuk menangani pembelian. Silahkan coba beberapa saat lagi.'); //random number tidak mungkin membuat kode unik setelah 50x loop
+                        } else {
+                            transaksi_controller.simpanTransaksi(denom, nomer, bayar, operator, harga, uniqprice, deviceId, (pesanSukses) => {
+                                return callback(pesanSukses);
+                            })
+                        }
+                    })
                 })
             })
         })

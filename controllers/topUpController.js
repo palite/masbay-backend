@@ -64,3 +64,14 @@ exports.ambilTopUpSaldo = function (harga, callback) {
     })
 }
 
+exports.updateStatusTopUp = function() {
+    let dateNow = new Date();
+    TopUp.updateMany({status:'Pending', date:{$lte: dateNow}}, {status:'Expired'})
+    .then((UpdatedTransaksi) => {
+        //console.log(UpdatedTransaksi);
+    })
+    .catch((err) => {
+        console.log(err);
+        console.log('Error update status top up');
+    });
+}
