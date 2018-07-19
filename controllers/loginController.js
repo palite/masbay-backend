@@ -10,10 +10,18 @@ exports.logIn = function (req,res) {
             console.log("Logout gagal");
         }
         console.log(doc);
-        var data = {
-            "session" : sesi,
-            "isloggedin" : true
+        if (doc != null){
+            var data = {
+                "session" : sesi,
+                "isloggedin" : true
+            }    
         }
+        else {
+            var data = {
+                "isloggedin" : false
+            }
+        }
+        
         res.send(data);
     });
 }

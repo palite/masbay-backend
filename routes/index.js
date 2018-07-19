@@ -8,9 +8,9 @@ router.use(bodyParser.urlencoded({extended: false}));
 var harga_controller = require('../controllers/hargaController');
 var transaksi_controller = require('../controllers/transaksiController');
 var chat_controller = require('../controllers/chatController');
-var signup_controller = require('../controllers/signup_controller');
-var signout_controller = require('../controllers/signout_controller');
-var login_conroller = require('../controllers/login_controller');
+var signup_controller = require('../controllers/signupController');
+var signout_controller = require('../controllers/signoutController');
+var login_conroller = require('../controllers/loginController');
 
 require('../controllers/timerController');
 
