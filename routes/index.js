@@ -18,7 +18,6 @@ router.get('/listHarga/:operator', harga_controller.listHarga);
 router.get('/riwayatTransaksi/:nomor', transaksi_controller.riwayatTransaksi);
 router.get('/transaksiTerakhir/:nomor', transaksi_controller.transaksiTerakhir);
 router.post('/chat', chat_controller.chat);
-router.post('/talk', chat_controller.talk);
 router.post('/signup',signup_controller.signUp);
 router.post('/signout',signout_controller.signOut);
 router.post('/login',login_conroller.logIn);
