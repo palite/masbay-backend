@@ -9,10 +9,12 @@ exports.signOut = function (req,res) {
         if (err){
             console.log("Logout gagal");
         }
-        console.log(doc);
-        var data = {
-            "isloggedout" : false
-        }
-        res.send(data);
+         else if (doc != null){
+            console.log(doc);
+            var data = {
+                "isloggedout" : true
+            }
+            res.send(data);
+        }   
     });
 }
