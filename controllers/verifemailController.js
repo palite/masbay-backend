@@ -16,7 +16,7 @@ exports.verifEmail = function (req,res) {
                 "identitas" : req.body.userId,
                 "password" : req.body.password,
                 "saldo" : 0,
-                "session" : sesi
+                "session" : null
             });
             dataId.save();
             var data = {

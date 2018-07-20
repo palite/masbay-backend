@@ -12,6 +12,8 @@ var signup_controller = require('../controllers/signupController');
 var signout_controller = require('../controllers/signoutController');
 var login_conroller = require('../controllers/loginController');
 var verif_email = require('../controllers/verifemailController');
+var forget_pass = require('../controllers/forgetpassController');
+var change_profil = require('../controllers/changeprofilController');
 
 require('../controllers/timerController');
 
@@ -23,6 +25,8 @@ router.post('/signup',signup_controller.signUp);
 router.post('/signout',signout_controller.signOut);
 router.post('/login',login_conroller.logIn);
 router.post('/verifemail',verif_email.verifEmail);
+router.post('/forget',forget_pass.forget);
+router.post('/change',change_profil.change);
 
 
 module.exports = router;

@@ -13,6 +13,7 @@
     "apiai": "^4.0.3",
     "axios": "^0.18.0",
     "bcrypt": "^2.0.1",
+    "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.18.3",
     "connect-mongo": "^2.0.1",
     "dotenv": "^5.0.1",
@@ -29,6 +30,7 @@
     "node-wit": "^5.0.0",
     "nodemailer": "^4.6.7",
     "pug": "^2.0.3",
+    "randomstring": "^1.1.5",
     "request": "^2.87.0",
     "uuid": "^3.3.2"
   },

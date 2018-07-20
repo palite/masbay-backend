@@ -10,12 +10,13 @@ var smtpTransport = nodemailer.createTransport({
     port: 587,
     secure: false, // true for 465, false for other ports
     auth: {
-        user: 'kukuh.raharjo1923@gmail.com', // generated ethereal user
-        pass: 'masbay' // generated ethereal password
+        user:  process.env.USEREMAIL,
+        pass:  process.env.MAILPASS
     }
 })
 
 exports.signUp = function (req,res) {
+    console.log(process.env.MAILPASS);
     User.find({identitas: req.body.userId})
         .then((doc) => {
             if (doc[0] != null) {
@@ -25,9 +26,9 @@ exports.signUp = function (req,res) {
                 res.send(data);
             }
             else {
-                var rand = Math.floor((Math.random()*9999)+1000);
+                var rand = Math.floor((Math.random()*8999)+1000);
                 var mailOptions = {
-                    from: 'adming@masbay.com',
+                    from: 'adminGanteng@masbay.com',
                     to : req.body.userId,
                     subject : "Masukkan kode berikut ke hpmu nak",
                     html : "Hai, <br> Masukkan kode "+rand+" ke hpmu nak."
