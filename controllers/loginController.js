@@ -5,7 +5,7 @@ const uuidv1 = require('uuid/v1');
 
 exports.logIn = function (req,res) {
     sesi = uuidv1();
-    User.findOneAndUpdate({session: req.body.session,password:req.body.password}, {$set:{session:sesi}},{new:true}, function(err,doc){
+    User.findOneAndUpdate({identitas: req.body.userId,password:req.body.password}, {$set:{session:sesi}},{new:true}, function(err,doc){
         if (err){
             console.log("Logout gagal");
         }

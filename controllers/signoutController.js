@@ -10,5 +10,9 @@ exports.signOut = function (req,res) {
             console.log("Logout gagal");
         }
         console.log(doc);
+        var data = {
+            "isloggedout" : false
+        }
+        res.send(data);
     });
 }

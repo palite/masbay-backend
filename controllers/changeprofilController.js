@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const User = mongoose.model('User');
 
 exports.change = function (req,res)  {
-    User.findOneAndUpdate({identitas : req.body.userId,password : req.body.password}, {$set:{password:req.body.newpassword}}, {new : true} , function(err,info){
+    User.findOneAndUpdate({session : req.body.session}, {$set:{password:req.body.newpassword}}, {new : true} , function(err,info){
         if (err) {
             console.log("update gagal");
         }
