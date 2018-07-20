@@ -70,7 +70,7 @@ function updatePembayaran(){
 setInterval(transaksi_controller.updateStatusTransaksi, 30000); //req setiap x/1000 detik
 setInterval(topup_controller.updateStatusTopUp, 30000); //req setiap x/1000 detik
 
-updatePembayaran();
+//updatePembayaran();
 setInterval(updatePembayaran, 300000); //req setiap x / 1000 detik
 
 
