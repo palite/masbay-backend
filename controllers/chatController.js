@@ -31,6 +31,8 @@ exports.chat = function (req, res) {
                 var respond = response.result.fulfillment.speech;
                 var kode1 = respond.indexOf("*ok*");
                 var kode2 = respond.indexOf("*wk*");
+                var kode3 = respond.indexOf("*sal*");
+                var kode4 = respond.indexOf("*sok*");
                 //console.log(typeof arrayrespond);
                 //kondisi saat rincian pembelian
                 if (kode1 != -1) {
@@ -41,10 +43,16 @@ exports.chat = function (req, res) {
                     //var operator = response.result.contexts[3].parameters.operator[0];
                     var bayar = arrayrespond[3];
                     //console.log(denom,nomer,bayar);
-                    bayar += "BNI";
-                    pembelian_controller.konfirmasiPembelian(denom, nomer, bayar, (pesan) => {
-                        res.send(pesan);
-                    });
+                    if ((bayar != 'saldo') && (bayar != 'Saldo')) {
+                        pembelian_controller.konfirmasiPembelian(denom, nomer, bayar, (pesan) => {
+                            res.send(pesan);
+                        });
+                    } else {
+                        pembelian_controller.cekSaldo(denom, nomer, req.body.session, (pesan) => {
+                            res.send(pesan);
+                        })
+                        //res.send('Fitur pembelian pulsa via saldo masih dikerjakan. Harap melakukan pengisian pulsa via transfer.');
+                    }
                 }
                 else if (kode2 != -1) {
                     var arrayrespond = respond.split(",");
@@ -53,9 +61,15 @@ exports.chat = function (req, res) {
                     var nomor = arrayrespond[1];
                     //var operator = response.result.contexts[3].parameters.operator[0];
                     var bayar = arrayrespond[3];
-                    pembelian_controller.prosesPembelian(denom, nomor, bayar, req.body.deviceId, (pesan) => {
-                        res.send(pesan);
-                    })
+                    if ((bayar != 'saldo') && (bayar != 'Saldo')) {
+                        pembelian_controller.prosesPembelian(denom, nomor, bayar, req.body.deviceId, (pesan) => {
+                            res.send(pesan);
+                        })
+                    } else {
+                        pembelian_controller.isiViaSaldo(denom, nomor,req.body.session, (pesan) => {
+                            res.send(pesan);
+                        })
+                    }
                     var sesiupdate = uuidv1();
                     Session.findOneAndUpdate({deviceId: req.body.deviceId}, {$set:{session:sesiupdate}},{new:true}, function(err,doc){
                         if (err){
@@ -63,6 +77,25 @@ exports.chat = function (req, res) {
                         }
                         console.log(doc);
                     });
+                }
+                else if (kode3 != -1) {
+                    var arrayrespond = respond.split(",");
+                    var saldo = arrayrespond[1];
+                    console.log('saldo : ');
+                    console.log(saldo);
+                    let saldocharged = parseInt(saldo) + 1000;
+                    let pesanKonfirmasi = "Top Up saldo ke akun anda : Rp "+ saldo + ",00 \nBiaya administrasi : Rp 1000,00\nTotal : Rp " + saldocharged + ",00.\nApakah anda yakin ? (y/n)*yn";
+                    console.log(pesanKonfirmasi);
+                    res.send(pesanKonfirmasi);
+                }
+                else if (kode4 != -1) {
+                    var arrayrespond = respond.split(",");
+                    var saldo = arrayrespond[1];
+                    console.log('isi saldo y : ');
+                    console.log(saldo);
+                    pembelian_controller.prosesTopUp(saldo, req.body.session, (pesan) => {
+                        res.send(pesan);
+                    })
                 }
                 else {
                 //console.log(response.result.contexts[0].name);

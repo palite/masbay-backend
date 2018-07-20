@@ -3,6 +3,7 @@ var kodeawal_controller = require('../controllers/kodeAwalController');
 var transaksi_controller = require('../controllers/transaksiController');
 var topup_controller = require('../controllers/topUpController');
 var user_controller = require('../controllers/userController');
+var api_pulsatop = require('../api/pulsatop');
 
 function generateKodeBayar(range, arrHargaPending, harga, callback) {
     let i = 0; //untuk iterate loop
@@ -33,7 +34,7 @@ exports.konfirmasiPembelian = function (denom, nomer, bayar, callback) {
         if (operator) {
             harga_controller.cekHarga(denom, operator, (harga) => {
                 if (harga) {
-                    let pesanKonfirmasi = "Pembelian "+ operator+ " sejumlah " + denom + " untuk "+ nomer +" dengan "+ bayar+ " seharga Rp " + harga + ",00. Apakah anda yakin ? (y/n)*yn";
+                    let pesanKonfirmasi = "Pembelian "+ operator+ " sejumlah " + denom + " untuk "+ nomer +" dengan "+ bayar+ " seharga Rp " + harga + ",00.\nApakah anda yakin ? (y/n)*yn";
                     return callback(pesanKonfirmasi);
                 } else {
                     return callback('Input nominal salah! Cari harga yang tersedia!');
@@ -71,7 +72,7 @@ exports.prosesTopUp = function (saldo, session, callback) {
         transaksi_controller.cekTransaksiPending((arrHargaPending) => {
             let arrPending = arrTopUpPending.concat(arrHargaPending);
             let charge = 1000;
-            let saldocharged = saldo+charge;
+            let saldocharged = parseInt(saldo)+charge;
             generateKodeBayar(100, arrPending, saldocharged, (uniqsaldo) => {
                 if (uniqsaldo != 100) {
                     //cari data user dgn session dr parameter
@@ -82,6 +83,42 @@ exports.prosesTopUp = function (saldo, session, callback) {
                     })
                 } else {
                     return callback('Maaf! Server sedang sibuk menangani pembelian. Silahkan coba beberapa saat lagi.'); //random number tidak mungkin membuat kode unik setelah 100x loop
+                }
+            })
+        })
+    })
+}
+
+exports.cekSaldo = function (denom, nomor, session, callback) {
+    kodeawal_controller.cekKodeAwal(nomor, (operator) => {
+        harga_controller.cekHarga(denom, operator, (harga) => {        
+            user_controller.cekSaldoCukup(harga, session, (cukup) => {
+                if ((cukup) && (cukup != 'Error')) {
+                    let pesanKonfirmasi = "Pembelian "+ operator+ " sejumlah " + denom + " untuk "+ nomor +" dengan saldo seharga Rp " + harga + ",00.\nApakah anda yakin ? (y/n)*yn";
+                    return callback(pesanKonfirmasi);
+                } else {
+                    return callback('Saya tidak ingin menambah kekurangan (saldo) Anda. :)');
+                }
+            })
+        })
+    })
+}
+
+exports.isiViaSaldo = function (denom, nomor, session, callback) {
+    kodeawal_controller.cekKodeAwal(nomor, (operator) => {
+        harga_controller.cekHarga(denom, operator, (harga) => {        
+            api_pulsatop.isiViaSaldo(denom, nomor, operator, (status) => {
+                if (status == 'error') {
+                    console.log("Akses ke API pulsatop gagal");
+                    return callback('pulsatop error');
+                } else {
+                    //kurangin saldo user pake session, output saldo sekarang + identitas user
+                    user_controller.kurangiSaldo(harga, session, arrUser => {
+                        //update status pembelian ke sukses
+                        transaksi_controller.simpanTransaksiSaldo(denom, nomor, operator, arrUser[0].saldo, harga, arrUser[0].identitas, (pesan) => {
+                            return callback(pesan);
+                        })
+                    })
                 }
             })
         })

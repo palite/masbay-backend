@@ -1,5 +1,6 @@
 var transaksi_controller = require('../controllers/transaksiController');
 var topup_controller = require('../controllers/topUpController');
+var user_controller = require('../controllers/userController');
 var api_crawler = require('../api/crawler');
 var api_pulsatop = require('../api/pulsatop');
 
@@ -24,7 +25,7 @@ function updatePembayaran(){
                                 //console.log('ketemu!');
                                 //ambil seluruh data dr price tsb
                                 transaksi_controller.ambilTransaksiTerbayar(arrTransaksiPending[i], paidTransaction => {
-                                    api_pulsatop.isi(paidTransaction, status => {
+                                    api_pulsatop.isiTransfer(paidTransaction, status => {
                                         if (status == 'error') {
                                             console.log("Akses ke API pulsatop gagal");
                                         } else {
