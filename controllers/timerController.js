@@ -27,10 +27,10 @@ function updatePembayaran(){
                                 //console.log('ketemu!');
                                 //ambil seluruh data dr price tsb
                                 transaksi_controller.ambilTransaksiTerbayar(arrTransaksiPending[i], paidTransaction => {
-                                    api_pulsatop.isiTransfer(paidTransaction, status => {
-                                        if (status == 'error') {
-                                            console.log("Akses ke API pulsatop gagal");
-                                        } else {
+                                    api_pulsatop.isiTransfer(paidTransaction, code => {
+                                        if (code == '2') {
+                                            console.log("Saldo denom admin habis");
+                                        } else if (code == '1') {
                                             //update status pembelian ke sukses
                                             transaksi_controller.suksesIsiPulsa(paidTransaction, (pesan) => {
                                                 console.log(pesan);

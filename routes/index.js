@@ -14,12 +14,14 @@ var login_conroller = require('../controllers/loginController');
 var verif_email = require('../controllers/verifemailController');
 var forget_pass = require('../controllers/forgetpassController');
 var change_profil = require('../controllers/changeprofilController');
+var menu_controller = require('../controllers/menuController');
 
 require('../controllers/timerController');
 
+router.get('/faq', menu_controller.faq);
 router.get('/listHarga/:operator', harga_controller.listHarga);
-router.get('/riwayatTransaksi/:nomor', transaksi_controller.riwayatTransaksi);
-router.get('/transaksiTerakhir/:nomor', transaksi_controller.transaksiTerakhir);
+router.post('/transaksiTerakhir', menu_controller.transaksiTerakhir);
+router.post('/riwayatTransaksi', menu_controller.riwayatTransaksi);
 router.post('/chat', chat_controller.chat);
 router.post('/signup',signup_controller.signUp);
 router.post('/signout',signout_controller.signOut);

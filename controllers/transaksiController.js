@@ -95,23 +95,23 @@ exports.updateStatusTransaksi = function() {
 }
 
 
-exports.riwayatTransaksi = function (req, res) {
-    Transaksi.find({phone: req.params.nomor})
+exports.riwayatTransaksi = function (user, callback) {
+    Transaksi.find({user: user}).sort({date: -1})
     .then((RiwayatTransaksi) => {
-        res.json(RiwayatTransaksi);
+        return callback(RiwayatTransaksi);
     })
-    .catch(() => {
-        res.send('Maaf! Terdapat error.');
+    .catch((err) => {
+        return callback(err);
     })
 }
 
-exports.transaksiTerakhir = function (req, res) {
-    Transaksi.findOne({phone: req.params.nomor}).sort('-date')
-    .then((RiwayatTransaksi) => {
-        res.send(RiwayatTransaksi.denom + " " + RiwayatTransaksi.channel + " " + RiwayatTransaksi.phone );
+exports.transaksiTerakhir = function (user, callback) {
+    Transaksi.find({user: user}).sort({date: -1})
+    .then((TransaksiTerakhir) => {
+        return callback(TransaksiTerakhir);
     })
-    .catch(() => {
-        res.send('Maaf! Terdapat error.');
+    .catch((err) => {
+        return callback(err);
     })
 }
 
