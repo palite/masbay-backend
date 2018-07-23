@@ -29,7 +29,7 @@ exports.forget = function(req,res) {
         }
         else {
                 var mailOptions = {
-                from: 'adminGanteng@masbay.com',
+                from: ' MasBay :3<adminGanteng@masbay.com>',
                 to : req.body.userId,
                 subject : "Password barumu",
                 html : "Hai, <br> password baru anda adalah  "+random+" <br> Harap ganti password anda setelah login."
