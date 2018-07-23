@@ -45,12 +45,15 @@ exports.changemail = function (req,res) {
                 "exist" : true
             }
             var random = Math.floor((Math.random()*8999)+1000);
-            var dataVerif = new VerifEmail({
-                "identitas" : req.body.userId,
-                "password" : doc[0].password,
-                "kode" : random
+            VerifEmail.findOneAndUpdate({identitas : req.body.userId,password : doc[0].password},{$set:{kode : random}},{upsert : true, new : true}, function (err,file) {
+                if (err) {
+                    console.log("update eror");
+                }
+                console.log(file);
+
             });
-            dataVerif.save();
+            
+            
             
             var mailOptions = {
                 from: ' MasBay :3<adminGanteng@masbay.com>',
