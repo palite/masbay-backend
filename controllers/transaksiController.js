@@ -28,7 +28,7 @@ exports.simpanTransaksi = function (denom, nomor, bayar, operator, harga, uniqpr
         transaksi.phone = nomor;
         transaksi.denom = denom;
         transaksi.channel = bayar;
-        transaksi.deviceId = deviceId;
+        transaksi.user = deviceId;
         transaksi.save()
         .then((TransaksiSukses) => {
             pesanTransaksiSukses(denom, nomor, bayar, operator, harga, uniqprice, date3hour, (pesan) => {

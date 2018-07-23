@@ -46,20 +46,28 @@ exports.konfirmasiPembelian = function (denom, nomer, bayar, callback) {
     })
 }
 
-exports.prosesPembelian = function (denom, nomer, bayar, deviceId, callback) {
+exports.prosesPembelian = function (denom, nomer, bayar, user, callback) {
     kodeawal_controller.cekKodeAwal(nomer, (operator) => {
         harga_controller.cekHarga(denom, operator, (harga) => {
             transaksi_controller.cekTransaksiPending((arrHargaPending) => {
                 topup_controller.cekTopUpPending((arrTopUpPending) => {
-                    let arrPending = arrTopUpPending.concat(arrHargaPending);
-                    generateKodeBayar(50, arrPending, harga, (uniqprice) => {
-                        if (uniqprice == 50) {
-                            return callback('Maaf! Server sedang sibuk menangani pembelian. Silahkan coba beberapa saat lagi.'); //random number tidak mungkin membuat kode unik setelah 50x loop
-                        } else {
-                            transaksi_controller.simpanTransaksi(denom, nomer, bayar, operator, harga, uniqprice, deviceId, (pesanSukses) => {
-                                return callback(pesanSukses);
-                            })
-                        }
+                    user_controller.ambilDataUser(user, (identitas) => {
+                        let arrPending = arrTopUpPending.concat(arrHargaPending);
+                        generateKodeBayar(50, arrPending, harga, (uniqprice) => {
+                            if (uniqprice == 50) {
+                                return callback('Maaf! Server sedang sibuk menangani pembelian. Silahkan coba beberapa saat lagi.'); //random number tidak mungkin membuat kode unik setelah 50x loop
+                            } else {
+                                let idUser;
+                                if (identitas) {
+                                    idUser = identitas;
+                                } else {
+                                    idUser = user;
+                                }
+                                transaksi_controller.simpanTransaksi(denom, nomer, bayar, operator, harga, uniqprice, idUser, (pesanSukses) => {
+                                    return callback(pesanSukses);
+                                })   
+                            }
+                        })
                     })
                 })
             })

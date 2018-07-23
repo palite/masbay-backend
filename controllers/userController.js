@@ -12,7 +12,7 @@ exports.ambilDataUser = function (session, callback) {
 exports.isiSaldo = function (arrTopUp, callback) {
     User.find({identitas: arrTopUp[0].user}).distinct('saldo')
     .then((saldoNow) => {
-        let saldoUpdated = saldoNow[0] + arrTopUp[0].saldo;
+        let saldoUpdated = saldoNow[0] + parseInt(arrTopUp[0].saldo);
         User.findOneAndUpdate({identitas: arrTopUp[0].user}, {saldo: saldoUpdated})
         .then((isiSaldoSukses) => {
             console.log(isiSaldoSukses);

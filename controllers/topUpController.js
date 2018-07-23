@@ -59,10 +59,25 @@ exports.ambilTopUpSaldo = function (harga, callback) {
         return callback(paidTopUp);
     })
     .catch((err) => {
-        console.log("Pencarian data top up dari harga yang ditemukan gagal! Mungkin ada data yg tidak sinkron pada database")
+        console.log("Pencarian data top up dari harga yang ditemukan gagal! Mungkin ada data yg tidak sinkron pada database");
         return callback(err);
     })
 }
+
+exports.suksesIsiSaldo = function (paidTopUp, callback) {
+    TopUp.update({_id : paidTopUp[0]._id}, {status: 'Success'})
+    .then((SuksesIsiSaldo) => {
+        //console.log(SuksesIsiSaldo);
+        let PesanSukses = "Pengisian saldo " + paidTopUp[0].user + " sukses!" ;
+        return callback(PesanSukses);
+    })
+    .catch((err) => {
+        console.log(err);
+        let PesanError = "Saldo mungkin sudah terisi namun pencatatan transaksi gagal. User: " . paidTopUp[0].user;
+        return callback(PesanError);
+    })
+}
+
 
 exports.updateStatusTopUp = function() {
     let dateNow = new Date();

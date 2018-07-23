@@ -62,7 +62,13 @@ exports.chat = function (req, res) {
                     //var operator = response.result.contexts[3].parameters.operator[0];
                     var bayar = arrayrespond[3];
                     if ((bayar != 'saldo') && (bayar != 'Saldo')) {
-                        pembelian_controller.prosesPembelian(denom, nomor, bayar, req.body.deviceId, (pesan) => {
+                        let identifier;
+                        if (req.body.session) {
+                            identifier = req.body.session;
+                        } else {
+                            identifier = req.body.deviceId;
+                        }
+                        pembelian_controller.prosesPembelian(denom, nomor, bayar, identifier, (pesan) => {
                             res.send(pesan);
                         })
                     } else {

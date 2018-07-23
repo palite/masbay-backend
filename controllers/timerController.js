@@ -15,10 +15,12 @@ function updatePembayaran(){
                 } else {
                     console.log('Crawler berhasil!');
                     let i;
+                    let trfketemu;
+                    let mutasiPulsa = cekmutasi;
                     for (i = 0; i < arrTransaksiPending.length; i++) { 
                         gantiFormat(arrTransaksiPending[i], cekprice => {
                             //cari rupiah yang pending pada array cek mutasi dr crawler
-                            trfketemu = cekmutasi.search(cekprice)
+                            trfketemu = mutasiPulsa.search(cekprice)
                             if (trfketemu == -1) {
                                 //console.log('gagal, coba lagi!');
                             } else {
@@ -40,22 +42,30 @@ function updatePembayaran(){
                         })
                     }
                     let j;
+                    let sldketemu;
+                    let mutasiSaldo = cekmutasi;
                     for (j = 0; j < arrTopUpPending.length; j++) { 
-                        gantiFormat(arrTopUpPending[j], cekprice => {
+                        console.log(arrTopUpPending);
+                        gantiFormat(arrTopUpPending[j], ceksaldo => {
                             //cari rupiah yang pending pada array cek mutasi dr crawler
-                            trfketemu = cekmutasi.search(cekprice)
-                            if (trfketemu == -1) {
-                                //console.log('gagal, coba lagi!');
+                            console.log(ceksaldo);
+                            console.log(mutasiSaldo);
+                            sldketemu = mutasiSaldo.search(ceksaldo);
+                            if (sldketemu == -1) {
+                                console.log('gagal, coba lagi!');
                             } else {
-                                //console.log('ketemu!');
+                                console.log('ketemu!');
                                 //ambil seluruh data dr price tsb
                                 topup_controller.ambilTopUpSaldo(arrTopUpPending[j], paidTopUp => {
-                                    user_controller.isiSaldo(paidTopUp, (pesan) => {
-                                        if (pesan == 'Error') {
+                                    console.log(paidTopUp);
+                                    user_controller.isiSaldo(paidTopUp, (isiSaldo) => {
+                                        //console.log(pesan);
+                                        if (isiSaldo == 'Error') {
                                             console.log('Isi saldo gagal! Kemungkinan data user tidak sinkron dengan database');
                                         } else {
-                                            console.log('Isi saldo sukses!');
-                                            console.log(pesan);
+                                            topup_controller.suksesIsiSaldo(paidTopUp, (pesan) => {
+                                                console.log(pesan);
+                                            })
                                         }
                                     })
                                 })
@@ -94,6 +104,6 @@ Number.prototype.formatRupiah = function(c, d, t){
 
 function gantiFormat(price, callback) {
     var cekprice = price.formatRupiah(0, ',', '.'); //edit 5850 -> 5.850 
-    cekprice = '\\"' + cekprice + ',00\\"';
+    cekprice = '\\"' + cekprice + ',00';
     return callback(cekprice); //cek array, ada yang sama dengan price / tidak
 }

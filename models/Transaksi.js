@@ -21,7 +21,7 @@ const SkemaTransaksi = new mongoose.Schema({
         type: Date,
         trim: true,
     },
-    user: {
+    user: { //kalau gak berisi session user, ya deviceId
         type: String,
         trim: true,
     },
@@ -33,10 +33,6 @@ const SkemaTransaksi = new mongoose.Schema({
     channel: {
         type: String,
         default: 'Transfer', //diganti kalau sudah mau develop pembayaran via saldo
-        trim: true,
-    },
-    deviceId: {
-        type: String,
         trim: true,
     },
 });
