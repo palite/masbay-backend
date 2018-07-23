@@ -28,7 +28,7 @@ exports.signUp = function (req,res) {
             else {
                 var rand = Math.floor((Math.random()*8999)+1000);
                 var mailOptions = {
-                    from: 'adminGanteng@masbay.com',
+                    from: 'MasBay :3 <adminGanteng@masbay.com>',
                     to : req.body.userId,
                     subject : "Masukkan kode berikut ke hpmu nak",
                     html : "Hai, <br> Masukkan kode "+rand+" ke hpmu nak."
