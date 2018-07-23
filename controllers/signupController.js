@@ -50,12 +50,15 @@ exports.signUp = function (req,res) {
 
                     }
                 });
-                var verifData = new VerifEmail({
-                    "identitas" : req.body.userId,
-                    "password" : req.body.password,
-                    "kode" : rand
+                VerifEmail.findOneAndUpdate({identitas : req.body.userId,password : req.body.password},{$set:{kode : rand}},{upsert : true, new : true}, function (err,file) {
+                    if (err) {
+                        console.log("update eror");
+                    }
+                    console.log(file);
+
                 });
-                verifData.save();
+                
+                
 
                 /*var sesi = uuidv1();
                 var data = {
