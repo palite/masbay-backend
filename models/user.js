@@ -11,11 +11,14 @@ const SkemaUser = new mongoose.Schema({
     },
     saldo: {
         type: Number,
+        default: 0,
         trim: true,
+        
     },
     session: {
         type: String,
         trim: true,
+        default: null
     }
 });
 

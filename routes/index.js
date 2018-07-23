@@ -26,7 +26,8 @@ router.post('/signout',signout_controller.signOut);
 router.post('/login',login_conroller.logIn);
 router.post('/verifemail',verif_email.verifEmail);
 router.post('/forget',forget_pass.forget);
-router.post('/change',change_profil.change);
+router.post('/changepass',change_profil.changepass);
+router.post('/changemail',change_profil.changemail);
 
 
 module.exports = router;

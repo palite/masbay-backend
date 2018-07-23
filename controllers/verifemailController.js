@@ -12,13 +12,26 @@ exports.verifEmail = function (req,res) {
             console.log("verif gagal");
         }
         else if (doc != null) {
-            var dataId = new User({
+             User.findOneAndUpdate({identitas: req.body.oldUserId,password: req.body.password}, {$set:{identitas: req.body.userId}}, function (err,info){
+                if (err) {
+                    console.log("eror,eror,eror,eror");
+                } else if (info == null) {
+                    var dataId = new User({
+                        "identitas" : req.body.userId,
+                        "password" : req.body.password,
+                    });
+                    dataId.save();
+                    console.log(info);
+                } else {
+                    console.log(info);
+                }
+                
+            }); 
+            /* var dataId = new User({
                 "identitas" : req.body.userId,
                 "password" : req.body.password,
-                "saldo" : 0,
-                "session" : null
             });
-            dataId.save();
+            dataId.save(); */
             var data = {
                 "iscodetrue" : true
             }
