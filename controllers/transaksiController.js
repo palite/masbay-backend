@@ -123,6 +123,7 @@ exports.simpanTransaksiSaldo = function (denom, nomor, operator, saldo, harga, u
     transaksi.date = new Date();
     
     //dari dialogflow
+    transaksi.status = 'Success';
     transaksi.phone = nomor;
     transaksi.denom = denom;
     transaksi.channel = 'Saldo';
