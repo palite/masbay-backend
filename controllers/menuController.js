@@ -1,5 +1,6 @@
 var transaksi_controller = require('../controllers/transaksiController');
 var user_controller = require('../controllers/userController');
+var faq_controller = require('../controllers/faqController');
 
 exports.riwayatTransaksi = function (req, res) {
     user_controller.ambilDataUser(req.body.session, user => {
@@ -37,5 +38,11 @@ exports.transaksiTerakhir = function (req, res) {
 }
 
 exports.faq = function (req, res) {
-    
+    faq_controller.faq(listFaq => {
+        if (listFaq) {
+            res.json(listFaq);
+        } else {
+            res.send('Error get FAQ');
+        }
+    })
 }
