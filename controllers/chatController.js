@@ -17,8 +17,7 @@ exports.chat = function (req, res) {
             console.log(doc);
         });
     }
-    else if (req.body.text != "reset"){
-        console.log('hahaha');  
+    else if (req.body.text != "reset"){ 
         var kk = apiai(process.env.TOKENAPIAI);
         Session.find({deviceId: req.body.deviceId})
         .then((data) => {
