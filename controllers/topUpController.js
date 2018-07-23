@@ -2,11 +2,11 @@ const mongoose = require('mongoose');
 
 const TopUp = mongoose.model('TopUp');
 
-exports.cekTopUpPending = function (callback) {
+exports.cekTopUp = function (arrStatus, callback) {
     let date1monthago = new Date();
     date1monthago.setTime(date1monthago.getTime() - (1000 * 60 * 60 * 24 * 30));
     //cari price yang mungkin ada dlm list crawler cek mutasi selama periode sebulan
-    TopUp.find({status: {$in: ['Pending', 'Success']}, date:{$gte: date1monthago}}).distinct('price')
+    TopUp.find({status: {$in: arrStatus}, date:{$gte: date1monthago}}).distinct('price')
     .then((arrHargaPending) => {
         return callback(arrHargaPending);
     })

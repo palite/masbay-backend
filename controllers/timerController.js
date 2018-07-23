@@ -7,8 +7,8 @@ var api_pulsatop = require('../api/pulsatop');
 //timer update pembayaran & crawler
 function updatePembayaran(){
 
-    transaksi_controller.cekTransaksiPending(arrTransaksiPending => {
-        topup_controller.cekTopUpPending((arrTopUpPending) => {
+    transaksi_controller.cekTransaksi(['Pending'], arrTransaksiPending => {
+        topup_controller.cekTopUp(['Pending'], (arrTopUpPending) => {
             api_crawler.crawl(cekmutasi => {
                 if (cekmutasi == 'Kesalahan') {
                     console.log('Crawler gagal!');
@@ -20,8 +20,8 @@ function updatePembayaran(){
                     for (i = 0; i < arrTransaksiPending.length; i++) { 
                         gantiFormat(arrTransaksiPending[i], cekprice => {
                             //cari rupiah yang pending pada array cek mutasi dr crawler
-                            trfketemu = mutasiPulsa.search(cekprice)
-                            if (trfketemu == -1) {
+                            trfketemu = mutasiPulsa.search(cekprice);
+                            if (trfketemu == -1) { 
                                 //console.log('gagal, coba lagi!');
                             } else {
                                 //console.log('ketemu!');
@@ -81,7 +81,7 @@ function updatePembayaran(){
 setInterval(transaksi_controller.updateStatusTransaksi, 30000); //req setiap x/1000 detik
 setInterval(topup_controller.updateStatusTopUp, 30000); //req setiap x/1000 detik
 
-//updatePembayaran();
+updatePembayaran();
 setInterval(updatePembayaran, 300000); //req setiap x / 1000 detik
 
 

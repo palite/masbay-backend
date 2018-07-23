@@ -5,7 +5,7 @@ var topup_controller = require('../controllers/topUpController');
 var user_controller = require('../controllers/userController');
 var api_pulsatop = require('../api/pulsatop');
 
-function generateKodeBayar(range, arrHargaPending, harga, callback) {
+function generateKodeBayar(range, arrHarga, harga, callback) {
     let i = 0; //untuk iterate loop
     let rand; //untuk generate angka random
     let uniqprice; //untuk simpan variabel harga unik
@@ -14,7 +14,7 @@ function generateKodeBayar(range, arrHargaPending, harga, callback) {
     do {
         rand = Math.floor((Math.random() * range) + 1); //generate random number antara 1-range
         uniqprice = harga - rand; //tambahkan price dengan random number
-        cekuniq = arrHargaPending.indexOf(uniqprice); // cek harga unik pada array object
+        cekuniq = arrHarga.indexOf(uniqprice); // cek harga unik pada array object
         i++;
         if (i==range) { //harga tidak mungkin unik, database penuh dgn kode unik
             uniqprice = range;
@@ -49,11 +49,11 @@ exports.konfirmasiPembelian = function (denom, nomer, bayar, callback) {
 exports.prosesPembelian = function (denom, nomer, bayar, user, callback) {
     kodeawal_controller.cekKodeAwal(nomer, (operator) => {
         harga_controller.cekHarga(denom, operator, (harga) => {
-            transaksi_controller.cekTransaksiPending((arrHargaPending) => {
-                topup_controller.cekTopUpPending((arrTopUpPending) => {
+            transaksi_controller.cekTransaksi(['Pending', 'Success'], (arrTransaksi) => {
+                topup_controller.cekTopUp(['Pending', 'Success'], (arrTopUp) => {
                     user_controller.ambilDataUser(user, (identitas) => {
-                        let arrPending = arrTopUpPending.concat(arrHargaPending);
-                        generateKodeBayar(50, arrPending, harga, (uniqprice) => {
+                        let arrHarga = arrTopUp.concat(arrTransaksi);
+                        generateKodeBayar(50, arrHarga, harga, (uniqprice) => {
                             if (uniqprice == 50) {
                                 return callback('Maaf! Server sedang sibuk menangani pembelian. Silahkan coba beberapa saat lagi.'); //random number tidak mungkin membuat kode unik setelah 50x loop
                             } else {
@@ -76,12 +76,12 @@ exports.prosesPembelian = function (denom, nomer, bayar, user, callback) {
 }
 
 exports.prosesTopUp = function (saldo, session, callback) {
-    topup_controller.cekTopUpPending((arrTopUpPending) => {
-        transaksi_controller.cekTransaksiPending((arrHargaPending) => {
-            let arrPending = arrTopUpPending.concat(arrHargaPending);
+    transaksi_controller.cekTransaksi(['Pending', 'Success'], (arrTransaksi) => {
+        topup_controller.cekTopUp(['Pending', 'Success'], (arrTopUp) => {
+            let arrHarga = arrTopUp.concat(arrTransaksi);
             let charge = 1000;
             let saldocharged = parseInt(saldo)+charge;
-            generateKodeBayar(100, arrPending, saldocharged, (uniqsaldo) => {
+            generateKodeBayar(100, arrHarga, saldocharged, (uniqsaldo) => {
                 if (uniqsaldo != 100) {
                     //cari data user dgn session dr parameter
                     user_controller.ambilDataUser(session, (user) => {
