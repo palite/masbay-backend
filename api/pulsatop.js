@@ -22,11 +22,11 @@ exports.isiTransfer = function (paidTransaction, callback) {
     .then((response) => {
         console.log(response.data);
         console.log(response.status);
-        return callback(response.data.status);
+        return callback(response.data.code);
     })
     .catch((err) =>{
         console.log(err);
-        return callback(response.data.status);
+        return callback(response.data.code);
     });         
 }
 
