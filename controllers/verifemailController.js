@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const User = mongoose.model('User');
+const Transaksi = mongoose.model('Transaksi');
+const TopUp = mongoose.model('TopUp');
 const VerifEmail = mongoose.model('VerifEmail');
 var nodemailer = require("nodemailer");
 
@@ -24,6 +26,20 @@ exports.verifEmail = function (req,res) {
                     console.log(info);
                 } else {
                     console.log(info);
+                    //tambah untuk update data user di db transaksi dan topup
+                    Transaksi.updateMany({user : req.body.oldUserId}, {user: req.body.userId}, function (err, info) {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            TopUp.updateMany({user:req.body.oldUserId}, {user: req.body.userId}, function (err, info) {
+                                if (err) {
+                                    console.log(err);
+                                } else {
+                                    console.log('db user, transaksi, dan topup sudah diupdate');
+                                }
+                            })
+                        }
+                    })
                 }
                 
             }); 
