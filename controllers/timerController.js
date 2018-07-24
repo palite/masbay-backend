@@ -45,19 +45,19 @@ function updatePembayaran(){
                     let sldketemu;
                     let mutasiSaldo = cekmutasi;
                     for (j = 0; j < arrTopUpPending.length; j++) { 
-                        console.log(arrTopUpPending);
+                        //console.log(arrTopUpPending);
                         gantiFormat(arrTopUpPending[j], ceksaldo => {
                             //cari rupiah yang pending pada array cek mutasi dr crawler
-                            console.log(ceksaldo);
-                            console.log(mutasiSaldo);
+                            //console.log(ceksaldo);
+                            //console.log(mutasiSaldo);
                             sldketemu = mutasiSaldo.search(ceksaldo);
                             if (sldketemu == -1) {
-                                console.log('gagal, coba lagi!');
+                                //console.log('gagal, coba lagi!');
                             } else {
-                                console.log('ketemu!');
+                                //console.log('ketemu!');
                                 //ambil seluruh data dr price tsb
                                 topup_controller.ambilTopUpSaldo(arrTopUpPending[j], paidTopUp => {
-                                    console.log(paidTopUp);
+                                    //console.log(paidTopUp);
                                     user_controller.isiSaldo(paidTopUp, (isiSaldo) => {
                                         //console.log(pesan);
                                         if (isiSaldo == 'Error') {
