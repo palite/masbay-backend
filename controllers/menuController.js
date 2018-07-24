@@ -47,6 +47,16 @@ exports.transaksiTerakhir = function (req, res) {
     })
 }
 
+exports.cekSaldo = function (req, res) {
+    user_controller.cekSaldo(req.body.session, saldo => {
+        if (saldo) {
+            res.send(saldo);
+        } else {
+            res.send('Saldo tidak ditemukan! Error pada session');
+        }
+    }) 
+}
+
 exports.faq = function (req, res) {
     faq_controller.faq(listFaq => {
         if (listFaq) {
