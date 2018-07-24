@@ -21,9 +21,14 @@ const SkemaTransaksi = new mongoose.Schema({
         type: Date,
         trim: true,
     },
-    user: { //kalau gak berisi session user, ya deviceId
+    user: {
         type: String,
         trim: true,
+        default: null
+    },
+    deviceId:{
+        type:String,
+        trim:true
     },
     status: {
         type: String,
