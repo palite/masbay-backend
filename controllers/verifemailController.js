@@ -21,6 +21,7 @@ exports.verifEmail = function (req,res) {
                     var dataId = new User({
                         "identitas" : req.body.userId,
                         "password" : req.body.password,
+                        "nama" : req.body.name
                     });
                     dataId.save();
                     console.log(info);

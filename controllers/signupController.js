@@ -31,7 +31,7 @@ exports.signUp = function (req,res) {
                     from: 'MasBay :3 <adminGanteng@masbay.com>',
                     to : req.body.userId,
                     subject : "Masukkan kode berikut ke hpmu nak",
-                    html : "Hai, <br> Masukkan kode "+rand+" ke hpmu nak."
+                    html : "Hai, "+req.body.name+ " <br> Masukkan kode "+rand+" ke hpmu nak."
                 }
                 console.log(mailOptions);
                 smtpTransport.sendMail(mailOptions, function(error,info){

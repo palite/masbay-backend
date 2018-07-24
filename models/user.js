@@ -19,6 +19,10 @@ const SkemaUser = new mongoose.Schema({
         type: String,
         trim: true,
         default: null
+    },
+    nama: {
+        type: String,
+        trim: true
     }
 });
 
