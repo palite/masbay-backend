@@ -24,6 +24,16 @@ exports.isiSaldo = function (arrTopUp, callback) {
     })
 }
 
+exports.cekSaldo = function (session, callback) {
+    User.find({session: session}).distinct('saldo')
+    .then((saldo) => {
+        return callback(saldo[0].toString());
+    })
+    .catch((err) => {
+        return callback('Error');
+    })
+}
+
 exports.cekSaldoCukup = function (bayar, session, callback) {
     User.find({session: session}).distinct('saldo')
     .then((saldoNow) => {

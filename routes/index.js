@@ -23,6 +23,7 @@ require('../controllers/notifrunController');
 router.get('/faq', menu_controller.faq);
 router.get('/terms', menu_controller.terms);
 router.get('/listHarga/:operator', harga_controller.listHarga);
+router.post('/cekSaldo', menu_controller.cekSaldo);
 router.post('/transaksiTerakhir', menu_controller.transaksiTerakhir);
 router.post('/riwayatTransaksi', menu_controller.riwayatTransaksi);
 router.post('/chat', chat_controller.chat);

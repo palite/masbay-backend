@@ -115,7 +115,7 @@ exports.chat = function (req, res) {
                 request.on('error', function(error) {
                     console.log(error);
                 });
-                request.end(); 
+                request.end();
 
         })
         .catch((err) => {
