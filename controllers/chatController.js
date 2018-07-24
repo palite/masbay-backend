@@ -84,14 +84,18 @@ exports.chat = function (req, res) {
                     });
                 }
                 else if (kode3 != -1) {
-                    var arrayrespond = respond.split(",");
-                    var saldo = arrayrespond[1];
-                    console.log('saldo : ');
-                    console.log(saldo);
-                    let saldocharged = parseInt(saldo) + 1000;
-                    let pesanKonfirmasi = "Top Up saldo ke akun anda : Rp "+ saldo + ",00 \nBiaya administrasi : Rp 1000,00\nTotal : Rp " + saldocharged + ",00.\nApakah anda yakin ? (y/n)*yn";
-                    console.log(pesanKonfirmasi);
-                    res.send(pesanKonfirmasi);
+                    if (req.body.session) {
+                        var arrayrespond = respond.split(",");
+                        var saldo = arrayrespond[1];
+                        console.log('saldo : ');
+                        console.log(saldo);
+                        let saldocharged = parseInt(saldo) + 1000;
+                        let pesanKonfirmasi = "Top Up saldo ke akun anda : Rp "+ saldo + ",00 \nBiaya administrasi : Rp 1000,00\nTotal : Rp " + saldocharged + ",00.\nApakah anda yakin ? (y/n)*yn";
+                        console.log(pesanKonfirmasi);
+                        res.send(pesanKonfirmasi);
+                    } else { //belum login
+                        res.send('Anda belum login! Daftarkan email anda pada menu jika belum membuat akun.');
+                    }
                 }
                 else if (kode4 != -1) {
                     var arrayrespond = respond.split(",");
