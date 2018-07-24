@@ -11,18 +11,23 @@ exports.logIn = function (req,res) {
         }
         console.log(doc);
         if (doc != null){
-            var data = {
-                "session" : sesi,
-                "isloggedin" : true
-            }    
+            User.find({identitas: req.body.userId}).distinct('nama')
+            .then((nama) => {
+                var data = {
+                    "session" : sesi,
+                    "name" : nama[0],
+                    "isloggedin" : true
+                }    
+                res.send(data);
+            })
         }
         else {
             var data = {
                 "isloggedin" : false
             }
+            res.send(data);
         }
         
-        res.send(data);
     });
 }
     
