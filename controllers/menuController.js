@@ -3,15 +3,25 @@ var user_controller = require('../controllers/userController');
 var faq_controller = require('../controllers/faqController');
 
 exports.riwayatTransaksi = function (req, res) {
-    user_controller.ambilDataUser(req.body.session, user => {
-        transaksi_controller.riwayatTransaksi(user, (arrRiwayat) => {
+    if (req.body.session) {
+        user_controller.ambilDataUser(req.body.session, user => {
+            transaksi_controller.riwayatTransaksi(user, (arrRiwayat) => {
+                if (arrRiwayat) {
+                    res.json(arrRiwayat);
+                } else {
+                    res.send('Data riwayat tidak ada dalam database!')
+                }
+            })
+        })
+    } else  if (req.body.deviceId) {
+        transaksi_controller.riwayatTransaksi(req.body.deviceId, (arrRiwayat) => {
             if (arrRiwayat) {
                 res.json(arrRiwayat);
             } else {
-                res.send('Data session tidak ada dalam database! Login terlebih dahulu.')
+                res.send('Data riwayat tidak ada dalam database!')
             }
         })
-    })
+    }
 }
 
 exports.transaksiTerakhir = function (req, res) {
