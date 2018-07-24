@@ -19,4 +19,4 @@ const SkemaTerms = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('Terms', SkemaFAQ);
+module.exports = mongoose.model('Terms', SkemaTerms);

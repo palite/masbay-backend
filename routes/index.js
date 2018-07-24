@@ -19,6 +19,7 @@ var menu_controller = require('../controllers/menuController');
 require('../controllers/timerController');
 
 router.get('/faq', menu_controller.faq);
+router.get('/terms', menu_controller.terms);
 router.get('/listHarga/:operator', harga_controller.listHarga);
 router.post('/transaksiTerakhir', menu_controller.transaksiTerakhir);
 router.post('/riwayatTransaksi', menu_controller.riwayatTransaksi);
