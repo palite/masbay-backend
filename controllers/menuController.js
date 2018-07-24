@@ -49,10 +49,10 @@ exports.transaksiTerakhir = function (req, res) {
 
 exports.cekSaldo = function (req, res) {
     user_controller.cekSaldo(req.body.session, saldo => {
-        if (saldo) {
+        if (saldo != 'Error') {
             res.send(saldo);
         } else {
-            res.send('Saldo tidak ditemukan! Error pada session');
+            res.send('0');
         }
     }) 
 }
