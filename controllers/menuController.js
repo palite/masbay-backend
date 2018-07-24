@@ -1,7 +1,7 @@
 var transaksi_controller = require('../controllers/transaksiController');
 var user_controller = require('../controllers/userController');
 var faq_controller = require('../controllers/faqController');
-
+var terms_controller = require('../controllers/termsController');
 exports.riwayatTransaksi = function (req, res) {
     if (req.body.session) {
         user_controller.ambilDataUser(req.body.session, user => {
@@ -53,6 +53,15 @@ exports.faq = function (req, res) {
             res.json(listFaq);
         } else {
             res.send('Error get FAQ');
+        }
+    })
+}
+exports.terms = function (req, res) {
+    terms_controller.term(listTerms => {
+        if (listTerms) {
+            res.json(listTerms);
+        } else {
+            res.send('Error get Terms');
         }
     })
 }
