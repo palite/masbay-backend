@@ -17,13 +17,8 @@ exports.notif = function  () {
             var end = moment(data[i].date,'YYYY-M-DD HH:mm:ss');
             var diff = moment.duration(end.diff(now));
             var hourDiff = diff.asMinutes();
-<<<<<<< HEAD
-            if (hourDiff <=63 && hourDiff >= 58) {
-                console.log('Kurang satu jam lagi');
-=======
-            if (hourDiff <=68 && hourDiff >= 53) {
+            if (hourDiff <=65 && hourDiff >= 55) {
                 console.log('wooooooooooy isi pulsamu');
->>>>>>> ea928a9cef668c6089978c0400f6b2d078bcda1e
             } else if (data[i].status === 'Expired') {
                 Transaksi.findOneAndUpdate({price : data[i].price,status : "Expired"},{$set:{status:"Expiredx"}},function (err,info)  {
                     if (err) {
@@ -34,11 +29,8 @@ exports.notif = function  () {
                     //console.log("hai");
                 });
                 // Transaksi.update({price: data[i].price},{$set:{status: "terlalu_lama"}});
-<<<<<<< HEAD
                     console.log('Sudah masa expired');
-=======
                     //console.log('WOOY LEWAT');
->>>>>>> ea928a9cef668c6089978c0400f6b2d078bcda1e
             }
         }
     }) 
@@ -48,13 +40,8 @@ exports.notif = function  () {
         for (i = 0; i < data.length; i++){
             var end = moment(data[i].date,'YYYY-M-DD HH:mm:ss');
             var hourDiff = end.diff(now,"m");
-<<<<<<< HEAD
-            if (hourDiff <=63 && hourDiff >= 58) {
-                console.log('Kurang satu jam lagi');
-=======
-            if (hourDiff <=68 && hourDiff >= 53) {
+            if (hourDiff <=65 && hourDiff >= 55) {
                 console.log('wooooooooooy isi saldomu');
->>>>>>> ea928a9cef668c6089978c0400f6b2d078bcda1e
             } else if (data[i].status === 'Expired') {
                TopUp.findOneAndUpdate({price : data[i].price,status: "Expired"},{$set:{status:"Expiredx"}},function (err,info)  {
                    if (err) {
@@ -65,11 +52,7 @@ exports.notif = function  () {
                    
                });
                 // TopUp.update({price: data[i].price},{status: "terlalu_lama"});
-<<<<<<< HEAD
-                console.log('Sudah masa expired');
-=======
                 //console.log('WOOY saldo LEWAT');
->>>>>>> ea928a9cef668c6089978c0400f6b2d078bcda1e
             }
         }
     }) 
