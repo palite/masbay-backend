@@ -67,7 +67,7 @@ exports.chat = function (req, res) {
                         } else {
                             identifier = req.body.deviceId;
                         }
-                        pembelian_controller.prosesPembelian(denom, nomor, bayar, identifier, (pesan) => {
+                        pembelian_controller.prosesPembelian(denom, nomor, bayar, identifier,req.body.session, (pesan) => {
                             res.send(pesan);
                         })
                     } else {
