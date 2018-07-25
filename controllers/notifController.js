@@ -18,7 +18,7 @@ exports.notif = function  () {
             var diff = moment.duration(end.diff(now));
             var hourDiff = diff.asMinutes();
             if (hourDiff <=63 && hourDiff >= 58) {
-                console.log('wooooooooooy isi pulsamu');
+                console.log('Kurang satu jam lagi');
             } else if (data[i].status === 'Expired') {
                 Transaksi.findOneAndUpdate({price : data[i].price,status : "Expired"},{$set:{status:"Late"}},function (err,info)  {
                     if (err) {
@@ -26,10 +26,10 @@ exports.notif = function  () {
                     } else {
                         console.log("update berhasil");
                     }
-                    console.log("hai");
+                    //console.log("hai");
                 });
                 // Transaksi.update({price: data[i].price},{$set:{status: "terlalu_lama"}});
-                    console.log('WOOY LEWAT');
+                    console.log('Sudah masa expired');
             }
         }
     }) 
@@ -40,7 +40,7 @@ exports.notif = function  () {
             var end = moment(data[i].date,'YYYY-M-DD HH:mm:ss');
             var hourDiff = end.diff(now,"m");
             if (hourDiff <=63 && hourDiff >= 58) {
-                console.log('wooooooooooy isi saldomu');
+                console.log('Kurang satu jam lagi');
             } else if (data[i].status === 'Expired') {
                TopUp.findOneAndUpdate({price : data[i].price,status: "Expired"},{$set:{status:"Late"}},function (err,info)  {
                    if (err) {
@@ -51,7 +51,7 @@ exports.notif = function  () {
                    
                });
                 // TopUp.update({price: data[i].price},{status: "terlalu_lama"});
-                console.log('WOOY saldo LEWAT');
+                console.log('Sudah masa expired');
             }
         }
     }) 
