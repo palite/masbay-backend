@@ -96,9 +96,30 @@ exports.updateStatusTransaksi = function() {
 
 
 exports.riwayatTransaksi = function (user, callback) {
-    Transaksi.find({user: user}).sort({date: -1})
+    Transaksi.find({user: user}).sort({date: -1}).lean()
     .then((RiwayatTransaksi) => {
-        return callback(RiwayatTransaksi);
+        //edit tanggal
+        let i;
+        let hari = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+        let bulan = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+        let jam = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"];
+        let menit = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59"];
+        arrRiwayatTransaksi = new Array();
+        for (i=0;i<RiwayatTransaksi.length;i++) {
+            arrRiwayatTransaksi[i] = RiwayatTransaksi[i];
+            let originDate = new Date(RiwayatTransaksi[i].date);
+            let day = hari[originDate.getDay()];
+            let date = originDate.getDate();
+            let month = bulan[originDate.getMonth()];
+            let year = originDate.getFullYear();
+            var fullDate = day + ", "+ date + " " + month + " " + year;
+            let hour = jam[originDate.getHours()];
+            let minutes = menit[originDate.getMinutes()];
+            var time = hour + "." + minutes;
+            (arrRiwayatTransaksi[i])["fullDate"] = fullDate;
+            (arrRiwayatTransaksi[i])["time"] = time;
+        }
+        return callback(arrRiwayatTransaksi);
     })
     .catch((err) => {
         return callback(err);
