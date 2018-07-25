@@ -7,8 +7,8 @@ var api_pulsatop = require('../api/pulsatop');
 //timer update pembayaran & crawler
 exports.crawler = function(callback) {
 
-    transaksi_controller.cekTransaksi(['Pending'], arrTransaksiPending => {
-        topup_controller.cekTopUp(['Pending'], (arrTopUpPending) => {
+    transaksi_controller.cekTransaksi(['Waiting'], arrTransaksiPending => {
+        topup_controller.cekTopUp(['Waiting'], (arrTopUpPending) => {
             api_crawler.crawl(cekmutasi => {
                 if (cekmutasi == 'Kesalahan') {
                     console.log('Crawler gagal!');

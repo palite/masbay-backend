@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 
 const Transaksi = mongoose.model('Transaksi');
-const Transaksi1 = mongoose.model('Transaksi');
+
 const TopUp = mongoose.model('TopUp');
-const TopUp1 = mongoose.model('TopUp');
+
 var moment = require('moment');
 exports.notif = function  () {
     console.log('hoo');

@@ -3,7 +3,7 @@ var user_controller = require('../controllers/userController');
 var faq_controller = require('../controllers/faqController');
 var terms_controller = require('../controllers/termsController');
 exports.riwayatTransaksi = function (req, res) {
-    if (req.body.session) {
+    if (req.body.session != '') {
         user_controller.ambilDataUser(req.body.session, user => {
             transaksi_controller.riwayatTransaksi(user, (arrRiwayat) => {
                 if (arrRiwayat) {
@@ -13,7 +13,7 @@ exports.riwayatTransaksi = function (req, res) {
                 }
             })
         })
-    } else  if (req.body.deviceId) {
+    } else if (req.body.deviceId) {
         transaksi_controller.riwayatTransaksi(req.body.deviceId, (arrRiwayat) => {
             if (arrRiwayat) {
                 res.json(arrRiwayat);

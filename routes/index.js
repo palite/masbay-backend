@@ -6,7 +6,6 @@ router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({extended: false}));
 
 var harga_controller = require('../controllers/hargaController');
-var transaksi_controller = require('../controllers/transaksiController');
 var chat_controller = require('../controllers/chatController');
 var signup_controller = require('../controllers/signupController');
 var signout_controller = require('../controllers/signoutController');
@@ -15,10 +14,6 @@ var verif_email = require('../controllers/verifemailController');
 var forget_pass = require('../controllers/forgetpassController');
 var change_profil = require('../controllers/changeprofilController');
 var menu_controller = require('../controllers/menuController');
-
-/*require('../controllers/timerController');
-require('../controllers/notifController');
-require('../controllers/notifrunController');*/
 
 router.get('/faq', menu_controller.faq);
 router.get('/terms', menu_controller.terms);
