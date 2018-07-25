@@ -23,6 +23,7 @@ crawl_controller.crawler(cekmutasi => {
     crawl_controller.transaksi(cekmutasi, sudah => {
         crawl_controller.topup(cekmutasi, sudah2 => {
             if ((sudah) && (sudah2)) {
+                console.log('sudah selesai crawl');
                 process.exit();
             }
         });

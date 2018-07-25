@@ -3,13 +3,13 @@ var user_controller = require('../controllers/userController');
 var faq_controller = require('../controllers/faqController');
 var terms_controller = require('../controllers/termsController');
 exports.riwayatTransaksi = function (req, res) {
-    if (req.body.session != '') {
+    if (req.body.session !== '') {
         user_controller.ambilDataUser(req.body.session, user => {
             transaksi_controller.riwayatTransaksi(user, (arrRiwayat) => {
                 if (arrRiwayat) {
                     res.json(arrRiwayat);
                 } else {
-                    res.send('Data riwayat tidak ada dalam database!')
+                    res.send('Data riwayat tidak ada dalam database!');
                 }
             })
         })
@@ -18,7 +18,7 @@ exports.riwayatTransaksi = function (req, res) {
             if (arrRiwayat) {
                 res.json(arrRiwayat);
             } else {
-                res.send('Data riwayat tidak ada dalam database!')
+                res.send('Data riwayat tidak ada dalam database!');
             }
         })
     }
