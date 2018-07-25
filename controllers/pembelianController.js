@@ -3,7 +3,20 @@ var kodeawal_controller = require('../controllers/kodeAwalController');
 var transaksi_controller = require('../controllers/transaksiController');
 var topup_controller = require('../controllers/topUpController');
 var user_controller = require('../controllers/userController');
+const mongoose = require('mongoose');
+const User = mongoose.model('User');
 var api_pulsatop = require('../api/pulsatop');
+var nodemailer = require("nodemailer");
+var smtpTransport = nodemailer.createTransport({
+    name: 'smtp2go',
+    host: 'mail.smtp2go.com',
+    port: 587,
+    secure: false, // true for 465, false for other ports
+    auth: {
+        user:  process.env.USEREMAIL,
+        pass:  process.env.MAILPASS
+    }
+})
 
 function generateKodeBayar(range, arrHarga, harga, callback) {
     let i = 0; //untuk iterate loop
@@ -46,7 +59,7 @@ exports.konfirmasiPembelian = function (denom, nomer, bayar, callback) {
     })
 }
 
-exports.prosesPembelian = function (denom, nomer, bayar, user, callback) {
+exports.prosesPembelian = function (denom, nomer, bayar, user,session,callback) {
     kodeawal_controller.cekKodeAwal(nomer, (operator) => {
         harga_controller.cekHarga(denom, operator, (harga) => {
             transaksi_controller.cekTransaksi(['Pending', 'Success'], (arrTransaksi) => {
@@ -64,6 +77,38 @@ exports.prosesPembelian = function (denom, nomer, bayar, user, callback) {
                                     idUser = user;
                                 }
                                 transaksi_controller.simpanTransaksi(denom, nomer, bayar, operator, harga, uniqprice, idUser, (pesanSukses) => {
+                                    User.find({session:session}) 
+                                    .then((doc) => {
+                                        if (doc[0] == null) {
+                                            console.log("user tidak login saat membeli");
+                                        } 
+                                        else {
+                                            
+                                            console.log(doc[0]);
+                                            var mailOptions = {
+                                                from: 'adminGanteng@masbay.com',
+                                                to : doc[0].identitas,
+                                                subject : "Data pembelian pulsa anda",
+                                                text : pesanSukses.slice(0,-2)
+                                            }
+                                            console.log(mailOptions);
+                                            smtpTransport.sendMail(mailOptions, function(error,info){
+                                                if (error) {
+                                                    console.log(error);
+                                                    
+                                                } else {
+                                                    //console.log('Message sent: %s', info.messageId);
+                                                    // Preview only available when sending through an Ethereal account
+                                                    //console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+                                                    console.log(info);
+                                                   
+                            
+                                                }
+                                            });
+                                            
+                                        } 
+                                    })
+                                    
                                     return callback(pesanSukses);
                                 })   
                             }
@@ -86,6 +131,34 @@ exports.prosesTopUp = function (saldo, session, callback) {
                     //cari data user dgn session dr parameter
                     user_controller.ambilDataUser(session, (user) => {
                         topup_controller.simpanTopUp(saldo, uniqsaldo, user, (pesan) => {
+                            User.find({session}) 
+                            .then((doc) => {
+                                if (doc[0] = null) {
+                                    console.log("user tidak login saat membeli");
+                                } 
+                                else {
+                                    var mailOptions = {
+                                        from: 'adminGanteng@masbay.com',
+                                        to : doc[0].identitas,
+                                        subject : "Data pembelian pulsa anda",
+                                        text : pesan.slice(0,-2)
+                                    }
+                                    console.log(mailOptions);
+                                    smtpTransport.sendMail(mailOptions, function(error,info){
+                                        if (error) {
+                                            console.log(error);
+                                        } else {
+                                            //console.log('Message sent: %s', info.messageId);
+                                            // Preview only available when sending through an Ethereal account
+                                            //console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+                                            console.log(info);
+                                            
+                    
+                                        }
+                                    });
+                                    
+                                } 
+                            })
                             return callback(pesan);
                         })
                     })
