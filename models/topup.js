@@ -19,7 +19,7 @@ const SkemaTopUp = new mongoose.Schema({
     },
     status: {
         type: String,
-        default: 'Pending',
+        default: 'Waiting',
         trim: true,
     },
 });

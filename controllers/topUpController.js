@@ -54,7 +54,7 @@ function pesanTopUpSukses(saldo, uniqsaldo, date3hour, callback) {
 }
 
 exports.ambilTopUpSaldo = function (harga, callback) {
-    TopUp.find({status:'Pending', price: harga})
+    TopUp.find({status:'Waiting', price: harga})
     .then((paidTopUp) => {
         return callback(paidTopUp);
     })
@@ -81,7 +81,7 @@ exports.suksesIsiSaldo = function (paidTopUp, callback) {
 
 exports.updateStatusTopUp = function() {
     let dateNow = new Date();
-    TopUp.updateMany({status:'Pending', date:{$lte: dateNow}}, {status:'Expired'})
+    TopUp.updateMany({status:'Waiting', date:{$lte: dateNow}}, {status:'Expired'})
     .then((UpdatedTransaksi) => {
         //console.log(UpdatedTransaksi);
     })

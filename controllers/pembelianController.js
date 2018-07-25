@@ -62,8 +62,8 @@ exports.konfirmasiPembelian = function (denom, nomer, bayar, callback) {
 exports.prosesPembelian = function (denom, nomer, bayar, user,session,callback) {
     kodeawal_controller.cekKodeAwal(nomer, (operator) => {
         harga_controller.cekHarga(denom, operator, (harga) => {
-            transaksi_controller.cekTransaksi(['Pending', 'Success'], (arrTransaksi) => {
-                topup_controller.cekTopUp(['Pending', 'Success'], (arrTopUp) => {
+            transaksi_controller.cekTransaksi(['Waiting', 'Success'], (arrTransaksi) => {
+                topup_controller.cekTopUp(['Waiting', 'Success'], (arrTopUp) => {
                     user_controller.ambilDataUser(user, (identitas) => {
                         let arrHarga = arrTopUp.concat(arrTransaksi);
                         generateKodeBayar(50, arrHarga, harga, (uniqprice) => {
@@ -121,8 +121,8 @@ exports.prosesPembelian = function (denom, nomer, bayar, user,session,callback) 
 }
 
 exports.prosesTopUp = function (saldo, session, callback) {
-    transaksi_controller.cekTransaksi(['Pending', 'Success'], (arrTransaksi) => {
-        topup_controller.cekTopUp(['Pending', 'Success'], (arrTopUp) => {
+    transaksi_controller.cekTransaksi(['Waiting', 'Success'], (arrTransaksi) => {
+        topup_controller.cekTopUp(['Waiting', 'Success'], (arrTopUp) => {
             let arrHarga = arrTopUp.concat(arrTransaksi);
             let charge = 1000;
             let saldocharged = parseInt(saldo)+charge;

@@ -20,7 +20,7 @@ exports.notif = function  () {
             if (hourDiff <=63 && hourDiff >= 58) {
                 console.log('Kurang satu jam lagi');
             } else if (data[i].status === 'Expired') {
-                Transaksi.findOneAndUpdate({price : data[i].price,status : "Expired"},{$set:{status:"Late"}},function (err,info)  {
+                Transaksi.findOneAndUpdate({price : data[i].price,status : "Expired"},{$set:{status:"Expiredx"}},function (err,info)  {
                     if (err) {
                         console.log("update eror");
                     } else {
@@ -42,7 +42,7 @@ exports.notif = function  () {
             if (hourDiff <=63 && hourDiff >= 58) {
                 console.log('Kurang satu jam lagi');
             } else if (data[i].status === 'Expired') {
-               TopUp.findOneAndUpdate({price : data[i].price,status: "Expired"},{$set:{status:"Late"}},function (err,info)  {
+               TopUp.findOneAndUpdate({price : data[i].price,status: "Expired"},{$set:{status:"Expiredx"}},function (err,info)  {
                    if (err) {
                        console.log("update eror");
                    } else {

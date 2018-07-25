@@ -84,7 +84,7 @@ router.post('/inputTransaksi', (req, res) => {
     Kodeawal.find({nomor: phone}).distinct('operator')
     .then((operator) => {
         //cari price yang sedang pending
-        Transaksi.find({status:'Pending'}).distinct('price')
+        Transaksi.find({status:'Waiting'}).distinct('price')
         .then((HargaPending) => {
             //cari price berdasarkan req.body.denom dan operator
             Harga.find({denom: req.body.denom, operator: operator[0]})

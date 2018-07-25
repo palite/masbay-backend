@@ -72,7 +72,7 @@ exports.suksesIsiPulsa = function (paidTransaction, callback) {
 }
 
 exports.ambilTransaksiTerbayar = function (harga, callback) {
-    Transaksi.find({status:'Pending', price: harga})
+    Transaksi.find({status:'Waiting', price: harga})
     .then((paidTransaction) => {
         return callback(paidTransaction);
     })
@@ -84,7 +84,7 @@ exports.ambilTransaksiTerbayar = function (harga, callback) {
 
 exports.updateStatusTransaksi = function() {
     let dateNow = new Date();
-    Transaksi.updateMany({status:'Pending', date:{$lte: dateNow}}, {status:'Expired'})
+    Transaksi.updateMany({status:'Waiting', date:{$lte: dateNow}}, {status:'Expired'})
     .then((UpdatedTransaksi) => {
         //console.log(UpdatedTransaksi);
     })
