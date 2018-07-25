@@ -17,7 +17,7 @@ exports.notif = function  () {
             var end = moment(data[i].date,'YYYY-M-DD HH:mm:ss');
             var diff = moment.duration(end.diff(now));
             var hourDiff = diff.asMinutes();
-            if (hourDiff <=63 && hourDiff >= 58) {
+            if (hourDiff <=68 && hourDiff >= 53) {
                 console.log('wooooooooooy isi pulsamu');
             } else if (data[i].status === 'Expired') {
                 Transaksi.findOneAndUpdate({price : data[i].price,status : "Expired"},{$set:{status:"Late"}},function (err,info)  {
@@ -29,7 +29,7 @@ exports.notif = function  () {
                     console.log("hai");
                 });
                 // Transaksi.update({price: data[i].price},{$set:{status: "terlalu_lama"}});
-                    console.log('WOOY LEWAT');
+                    //console.log('WOOY LEWAT');
             }
         }
     }) 
@@ -39,7 +39,7 @@ exports.notif = function  () {
         for (i = 0; i < data.length; i++){
             var end = moment(data[i].date,'YYYY-M-DD HH:mm:ss');
             var hourDiff = end.diff(now,"m");
-            if (hourDiff <=63 && hourDiff >= 58) {
+            if (hourDiff <=68 && hourDiff >= 53) {
                 console.log('wooooooooooy isi saldomu');
             } else if (data[i].status === 'Expired') {
                TopUp.findOneAndUpdate({price : data[i].price,status: "Expired"},{$set:{status:"Late"}},function (err,info)  {
@@ -51,7 +51,7 @@ exports.notif = function  () {
                    
                });
                 // TopUp.update({price: data[i].price},{status: "terlalu_lama"});
-                console.log('WOOY saldo LEWAT');
+                //console.log('WOOY saldo LEWAT');
             }
         }
     }) 

@@ -16,9 +16,9 @@ var forget_pass = require('../controllers/forgetpassController');
 var change_profil = require('../controllers/changeprofilController');
 var menu_controller = require('../controllers/menuController');
 
-require('../controllers/timerController');
+/*require('../controllers/timerController');
 require('../controllers/notifController');
-require('../controllers/notifrunController');
+require('../controllers/notifrunController');*/
 
 router.get('/faq', menu_controller.faq);
 router.get('/terms', menu_controller.terms);
