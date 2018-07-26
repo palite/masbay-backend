@@ -18,8 +18,8 @@ require('./models/index');
 //var notif_controller = require('./controllers/notifController');
 //notif_controller.notif();
 
-var transaksi_controller = require('../controllers/transaksiController');
-var topup_controller = require('../controllers/topUpController');
+var transaksi_controller = require('./controllers/transaksiController');
+var topup_controller = require('./controllers/topUpController');
 
 transaksi_controller.updateStatusTransaksi();
 topup_controller.updateStatusTopUp();
