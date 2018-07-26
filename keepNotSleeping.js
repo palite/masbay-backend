@@ -2,7 +2,7 @@ function keepNotSleeping() {
     var request = require("request");
     var options = {
         method: 'GET',
-        url: 'https://intense-inlet-67504.herokuapp.com/faq',
+        url: process.env.URLKEEPNOTSLEEP,
         headers: 
         { 'Cache-Control': 'no-cache' }
     };
