@@ -54,7 +54,7 @@ function pesanTransaksiSukses(denom, nomor, bayar, operator, harga, uniqprice, d
     let jam = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"];
     let menit = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59"];
 
-    return callback("Pembelian "+ operator+ " sebanyak " + denom + " untuk "+ nomor +" dengan "+ bayar+ " sejumlah Rp " + uniqprice + ",00.\n(Diskon Rp " + (harga-uniqprice) + ") berhasil.\nHarap melakukan transfer ke rekening BNI berikut: 0427222248 (a.n Muhammad Habibullah)\npaling lambat pukul " + jam[date3hour.getHours()] + "." + menit[date3hour.getMinutes()] + " hari " + hari[date3hour.getDay()] + ", " + date3hour.getDate() + " " + bulan[date3hour.getMonth()] + " " + date3hour.getFullYear() + ".\nMohon transfer sesuai dengan jumlah transfer agar dapat diproses secara otomatis." + "*n");
+    return callback("Pembelian "+ harga[0].name + " sebanyak " + denom + " untuk "+ nomor +" dengan "+ bayar+ " sejumlah Rp " + uniqprice + ",00.\n(Diskon Rp " + (harga[0].price - uniqprice) + ") berhasil.\nHarap melakukan transfer ke rekening BNI berikut: 0427222248 (a.n Muhammad Habibullah)\npaling lambat pukul " + jam[date3hour.getHours()] + "." + menit[date3hour.getMinutes()] + " hari " + hari[date3hour.getDay()] + ", " + date3hour.getDate() + " " + bulan[date3hour.getMonth()] + " " + date3hour.getFullYear() + ".\nMohon transfer sesuai dengan jumlah transfer agar dapat diproses secara otomatis." + "*n");
 }
 
 exports.suksesIsiPulsa = function (paidTransaction, callback) {
@@ -141,7 +141,7 @@ exports.simpanTransaksiSaldo = function (denom, nomor, operator, saldo, harga, u
     //simpan data harga ke dalam request yang akan disimpan ke dalam database
     const transaksi = new Transaksi();
     transaksi.operator = operator;
-    transaksi.price = harga;
+    transaksi.price = harga[0].price;
     transaksi.date = new Date();
     
     //dari dialogflow

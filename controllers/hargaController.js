@@ -3,10 +3,10 @@ const mongoose = require('mongoose');
 const Harga = mongoose.model('Harga');
 
 exports.cekHarga = function (denom, operator, callback) {
-    Harga.find({denom: denom, operator: operator}).distinct('price')
+    Harga.find({denom: denom, operator: operator})
     .then((hargaPulsa) => {
-        if (hargaPulsa[0]) {
-            return callback(hargaPulsa[0]);
+        if (hargaPulsa) {
+            return callback(hargaPulsa);
         } else {
             return callback(false);
         }
