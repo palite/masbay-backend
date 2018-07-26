@@ -28,7 +28,7 @@ exports.transaksi = function (arr, callback) {
     let mutasiPulsa = arr[0];
     let arrTransaksiPending = arr[1];
     for (i = 0; i < arrTransaksiPending.length; i++) { 
-        console.log(arrTransaksiPending[i]);
+        //console.log(arrTransaksiPending[i]);
         gantiFormat(arrTransaksiPending[i], cekprice => {
             //cari rupiah yang pending pada array cek mutasi dr crawler
             trfketemu = mutasiPulsa.search(cekprice);
@@ -61,7 +61,7 @@ exports.topup = function (arr, callback) {
     let mutasiSaldo = arr[0];
     let arrTopUpPending = arr[2];
     for (j = 0; j < arrTopUpPending.length; j++) { 
-        console.log(arrTopUpPending[j]);
+        //console.log(arrTopUpPending[j]);
         gantiFormat(arrTopUpPending[j], ceksaldo => {
             //cari rupiah yang pending pada array cek mutasi dr crawler
             //console.log(ceksaldo);

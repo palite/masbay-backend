@@ -87,7 +87,7 @@ exports.updateStatusTransaksi = function() {
     Transaksi.updateMany({status:'Waiting', date:{$lte: dateNow}}, {status:'Expired'})
     .then((UpdatedTransaksi) => {
         //console.log(UpdatedTransaksi);
-        console.log('Update status transaksi');
+        //console.log('Update status transaksi');
     })
     .catch((err) => {
         console.log(err);
