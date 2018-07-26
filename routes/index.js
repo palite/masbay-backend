@@ -20,6 +20,7 @@ router.get('/terms', menu_controller.terms);
 router.get('/listHarga/:operator', harga_controller.listHarga);
 router.post('/cekSaldo', menu_controller.cekSaldo);
 router.post('/transaksiTerakhir', menu_controller.transaksiTerakhir);
+router.post('/tanggalRiwayatTransaksi', menu_controller.tanggalRiwayatTransaksi);
 router.post('/riwayatTransaksi', menu_controller.riwayatTransaksi);
 router.post('/chat', chat_controller.chat);
 router.post('/signup',signup_controller.signUp);

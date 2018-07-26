@@ -96,8 +96,66 @@ exports.updateStatusTransaksi = function() {
 }
 
 
-exports.riwayatTransaksi = function (user, callback) {
-    Transaksi.find({user: user}).sort({date: -1}).lean()
+exports.tanggalRiwayatTransaksi = function (user, callback) {
+    Transaksi.find({user: user}).distinct('date')
+    .then((tanggal) => {
+        //edit tanggal
+        let i;
+        let hari = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+        let bulan = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+        arrTanggal = new Array();
+        let k = 0;
+        for (i=0;i<tanggal.length;i++) {
+            let originDate = new Date(tanggal[i]);
+            let day = hari[originDate.getDay()];
+            let date = originDate.getDate();
+            let month = bulan[originDate.getMonth()];
+            let year = originDate.getFullYear();
+            var fullDate = day + ", "+ date + " " + month + " " + year;
+            let kembar = false;
+            for (j=0;j<i;j++) {
+                if (fullDate == arrTanggal[j]) {
+                    kembar = true;
+                }
+            }
+            if (kembar == false) {
+                arrTanggal[k] = fullDate;
+                k++;
+            }
+            kembar = false;
+        }
+        return callback(arrTanggal);
+    })
+    .catch((err) => {
+        console.log(err);
+        return callback (false);
+    })
+}
+
+exports.riwayatTransaksi = function (user, date, callback) {
+    let date1;
+    let date2;
+    if (date == '') {
+        date1 = new Date(1999, 12, 31, 23, 59, 59);
+        console.log(date1);
+        date2 = new Date(2049, 12, 31, 23, 59, 59);
+        console.log(date2);
+    } else  {
+        //edit tanggal jadi tipe Date buat dicompare
+        let dd = (date.substring(0,2));
+        let mm = (date.substring(2,4));
+        console.log(mm);
+        let yyyy = parseInt(date.substring(4,8));
+        date1 = new Date(yyyy+'-'+mm+'-'+dd+'T00:00:00');
+        date2 = new Date(yyyy+'-'+mm+'-'+dd+'T23:59:59');
+        dateNow = new Date();
+        console.log(date1);
+        console.log(date2);
+        console.log(dateNow);
+        //date1 = tgl hari itu jam 00.00.00
+        //date2 = tgl hari itu jam 23.59.59
+    }
+    Transaksi.find({user: user, date: {$gte: date1/*+1hari*/, $lte: date2}}).sort({date: -1}).lean()
     .then((RiwayatTransaksi) => {
         //edit tanggal
         let i;
