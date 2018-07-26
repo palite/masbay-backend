@@ -58,6 +58,7 @@ function stop() {
     process.exit();
 }
 
+keepNotSleeping();
 setInterval(crawl, 180000); //3 menit
 setInterval(keepNotSleeping, 180000); //3 menit
 setInterval(stop, 590000); //9 menit 50 detik
