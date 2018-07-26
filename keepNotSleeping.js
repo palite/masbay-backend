@@ -2,13 +2,19 @@ function keepNotSleeping() {
     var request = require("request");
     var options = {
         method: 'GET',
-        url: 'https://intense-inlet-67504.herokuapp.com/',
+        url: 'https://intense-inlet-67504.herokuapp.com/faq',
         headers: 
         { 'Cache-Control': 'no-cache' }
     };
     request(options, function (error, response, body) {
-        if (error) throw new Error(error);
+        //console.log(body);
     })
 }
+function stop() {
+    //date = new Date();
+    //console.log(date);
+    process.exit();
+}
+
 keepNotSleeping();
-setInterval(keepNotSleeping, 60000);
+setInterval(stop, 10000);
