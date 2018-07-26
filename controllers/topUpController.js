@@ -84,6 +84,7 @@ exports.updateStatusTopUp = function() {
     TopUp.updateMany({status:'Waiting', date:{$lte: dateNow}}, {status:'Expired'})
     .then((UpdatedTransaksi) => {
         //console.log(UpdatedTransaksi);
+        //console.log('Update status top up');
     })
     .catch((err) => {
         console.log(err);
