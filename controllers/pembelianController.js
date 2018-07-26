@@ -47,7 +47,7 @@ exports.konfirmasiPembelian = function (denom, nomer, bayar, callback) {
         if (operator) {
             harga_controller.cekHarga(denom, operator, (harga) => {
                 if (harga) {
-                    let pesanKonfirmasi = "Pembelian "+ harga[0].name + " sejumlah " + denom + " untuk "+ nomer +" dengan "+ bayar+ " seharga Rp " + harga[0].price + ",00.\nApakah anda yakin ? (y/n)*yn";
+                    let pesanKonfirmasi = "Pembelian "+ harga[0].name + " untuk "+ nomer +" dengan "+ bayar+ " seharga Rp " + harga[0].price + ",00.\nApakah anda yakin ? (y/n)*yn";
                     return callback(pesanKonfirmasi);
                 } else {
                     return callback('Input nominal salah! Cari harga yang tersedia!');
@@ -175,7 +175,7 @@ exports.cekSaldo = function (denom, nomor, session, callback) {
         harga_controller.cekHarga(denom, operator, (harga) => {        
             user_controller.cekSaldoCukup(harga[0].price, session, (cukup) => {
                 if ((cukup) && (cukup != 'Error')) {
-                    let pesanKonfirmasi = "Pembelian "+ harga[0].name + " sejumlah " + denom + " untuk "+ nomor +" dengan saldo seharga Rp " + harga[0].price + ",00.\nApakah anda yakin ? (y/n)*yn";
+                    let pesanKonfirmasi = "Pembelian "+ harga[0].name + " untuk "+ nomor +" dengan saldo seharga Rp " + harga[0].price + ",00.\nApakah anda yakin ? (y/n)*yn";
                     return callback(pesanKonfirmasi);
                 } else {
                     return callback('Saya tidak ingin menambah kekurangan (saldo) Anda. :)');
@@ -188,9 +188,9 @@ exports.cekSaldo = function (denom, nomor, session, callback) {
 exports.isiViaSaldo = function (denom, nomor, session, callback) {
     kodeawal_controller.cekKodeAwal(nomor, (operator) => {
         harga_controller.cekHarga(denom, operator, (harga) => {        
-            api_pulsatop.isiViaSaldo(denom, nomor, operator, (status) => {
-                if (status == 'error') {
-                    console.log("Akses ke API pulsatop gagal");
+            api_pulsatop.isiViaSaldo(denom, nomor, operator, (code) => {
+                if (code == '2') {
+                    console.log("Saldo denom admin habis");
                     return callback('pulsatop error');
                 } else {
                     //kurangin saldo user pake session, output saldo sekarang + identitas user
