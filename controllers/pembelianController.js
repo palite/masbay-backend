@@ -135,7 +135,7 @@ exports.prosesTopUp = function (saldo, session, callback) {
                         topup_controller.simpanTopUp(saldo, uniqsaldo, user, (pesan) => {
                             User.find({session}) 
                             .then((doc) => {
-                                if (doc[0] = null) {
+                                if (doc[0] == null) {
                                     console.log("user tidak login saat membeli");
                                 } 
                                 else {
