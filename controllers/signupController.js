@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
 const User = mongoose.model('User');
 const VerifEmail = mongoose.model('VerifEmail');
+var mail_controller = require('../controllers/emailController');
 
 const uuidv1 = require('uuid/v1');
-var nodemailer = require("nodemailer");
+/*var nodemailer = require("nodemailer");
 var smtpTransport = nodemailer.createTransport({
     name: 'smtp2go',
     host: 'mail.smtp2go.com',
@@ -13,7 +14,7 @@ var smtpTransport = nodemailer.createTransport({
         user:  process.env.USEREMAIL,
         pass:  process.env.MAILPASS
     }
-})
+}) */
 
 exports.signUp = function (req,res) {
     console.log(process.env.MAILPASS);
@@ -27,7 +28,9 @@ exports.signUp = function (req,res) {
             }
             else {
                 var rand = Math.floor((Math.random()*8999)+1000);
-                var mailOptions = {
+                var pesan = "Hai, \n"+req.body.userId+" \n Masukkan kode "+rand+" ke hpmu!";
+                mail_controller.email(req.body.userId,pesan);
+               /* var mailOptions = {
                     from: 'MasBay :3 <adminGanteng@masbay.com>',
                     to : req.body.userId,
                     subject : "Masukkan kode berikut ke hpmu nak",
@@ -49,7 +52,7 @@ exports.signUp = function (req,res) {
                         res.send(data);
 
                     }
-                });
+                });*/
                 VerifEmail.findOneAndUpdate({identitas : req.body.userId,password : req.body.password},{$set:{kode : rand}},{upsert : true, new : true}, function (err,file) {
                     if (err) {
                         console.log("update eror");

@@ -1,8 +1,9 @@
+var mail_controller = require('../controllers/emailController');
 const mongoose = require('mongoose');
 const User = mongoose.model('User');
-var nodemailer = require("nodemailer");
+//var nodemailer = require("nodemailer");
 const VerifEmail = mongoose.model('VerifEmail');
-var smtpTransport = nodemailer.createTransport({
+/*var smtpTransport = nodemailer.createTransport({
     name: 'smtp2go',
     host: 'mail.smtp2go.com',
     port: 587,
@@ -11,7 +12,7 @@ var smtpTransport = nodemailer.createTransport({
         user:  process.env.USEREMAIL,
         pass:  process.env.MAILPASS
     }
-})
+})*/
 
 exports.changepass = function (req,res)  {
     User.findOneAndUpdate({session : req.body.session,password : req.body.password}, {$set:{password:req.body.newpassword}} , function(err,info){
@@ -52,10 +53,10 @@ exports.changemail = function (req,res) {
                 console.log(file);
 
             });
+            mail_controller.email(req.body.userId,"Hai, \n Masukkan kode anda"+random+" \n kedalam hp anda!");
             
             
-            
-            var mailOptions = {
+            /*var mailOptions = {
                 from: ' MasBay :3<adminGanteng@masbay.com>',
                 to : req.body.userId,
                 subject : "Masukkan kode",
@@ -74,7 +75,7 @@ exports.changemail = function (req,res) {
                     res.send(data);
 
                 }
-            })   
+            })   */
             
         }
     })

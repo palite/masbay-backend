@@ -3,10 +3,11 @@ var kodeawal_controller = require('../controllers/kodeAwalController');
 var transaksi_controller = require('../controllers/transaksiController');
 var topup_controller = require('../controllers/topUpController');
 var user_controller = require('../controllers/userController');
+var mail_controller = require('../controllers/emailController');
 const mongoose = require('mongoose');
 const User = mongoose.model('User');
 var api_pulsatop = require('../api/pulsatop');
-var nodemailer = require("nodemailer");
+/*var nodemailer = require("nodemailer");
 var smtpTransport = nodemailer.createTransport({
     name: 'smtp2go',
     host: 'mail.smtp2go.com',
@@ -16,7 +17,7 @@ var smtpTransport = nodemailer.createTransport({
         user:  process.env.USEREMAIL,
         pass:  process.env.MAILPASS
     }
-})
+}) */
 
 function generateKodeBayar(range, arrHarga, harga, callback) {
     let i = 0; //untuk iterate loop
@@ -85,7 +86,8 @@ exports.prosesPembelian = function (denom, nomer, bayar, user,session,callback) 
                                         else {
                                             
                                             console.log(doc[0]);
-                                            var mailOptions = {
+                                            mail_controller.email(doc[0].identitas,pesanSukses.slice(0,-2));
+                                            /*var mailOptions = {
                                                 from: 'adminGanteng@masbay.com',
                                                 to : doc[0].identitas,
                                                 subject : "Data pembelian pulsa anda",
@@ -104,7 +106,7 @@ exports.prosesPembelian = function (denom, nomer, bayar, user,session,callback) 
                                                    
                             
                                                 }
-                                            });
+                                            });*/
                                             
                                         } 
                                     })
@@ -137,7 +139,8 @@ exports.prosesTopUp = function (saldo, session, callback) {
                                     console.log("user tidak login saat membeli");
                                 } 
                                 else {
-                                    var mailOptions = {
+                                    mail_controller.email(doc[0].identitas,pesan.slice(0,-2));
+                                    /*var mailOptions = {
                                         from: 'adminGanteng@masbay.com',
                                         to : doc[0].identitas,
                                         subject : "Data pembelian pulsa anda",
@@ -155,7 +158,7 @@ exports.prosesTopUp = function (saldo, session, callback) {
                                             
                     
                                         }
-                                    });
+                                    });*/
                                     
                                 } 
                             })
