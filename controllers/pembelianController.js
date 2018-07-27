@@ -133,7 +133,7 @@ exports.prosesTopUp = function (saldo, session, callback) {
                     //cari data user dgn session dr parameter
                     user_controller.ambilDataUser(session, (user) => {
                         topup_controller.simpanTopUp(saldo, uniqsaldo, user, (pesan) => {
-                            User.find({session}) 
+                            User.find({session:session}) 
                             .then((doc) => {
                                 if (doc[0] == null) {
                                     console.log("user tidak login saat membeli");
