@@ -1,4 +1,4 @@
-# masbay-backend //// HACKED BY MY SELF HAHAHA
+# masbay-backend
 
 ## Website Pembelian Pulsa
 Menggunakan NodeJS, ExpressJS, dan MongoDB
