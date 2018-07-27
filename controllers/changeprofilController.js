@@ -14,7 +14,7 @@ var smtpTransport = nodemailer.createTransport({
 })
 
 exports.changepass = function (req,res)  {
-    User.findOneAndUpdate({session : req.body.session,password : req.body.password}, {$set:{password:req.body.newpassword}}, {new : true} , function(err,info){
+    User.findOneAndUpdate({session : req.body.session,password : req.body.password}, {$set:{password:req.body.newpassword}} , function(err,info){
         if (err) {
             console.log("update gagal");
         }
@@ -76,6 +76,24 @@ exports.changemail = function (req,res) {
                 }
             })   
             
+        }
+    })
+}
+exports.changename = function (req,res) {
+    User.findOneAndUpdate({session : req.body.session}, {$set:{nama:req.body.name} }, function(err,info){
+        if (err) {
+            console.log("update gagal");
+        }
+        else if (info != null){
+            var data = {
+                "changed" : true
+            }
+            res.send(data);
+        } else {
+            var data = {
+                "changed" : false
+            }
+            res.send(data);
         }
     })
 }

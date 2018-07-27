@@ -30,6 +30,7 @@ router.post('/verifemail',verif_email.verifEmail);
 router.post('/forget',forget_pass.forget);
 router.post('/changepass',change_profil.changepass);
 router.post('/changemail',change_profil.changemail);
+router.post('/changename',change_profil.changename);
 
 
 module.exports = router;
