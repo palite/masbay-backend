@@ -54,7 +54,7 @@ function pesanTransaksiSukses(denom, nomor, bayar, operator, harga, uniqprice, d
     let jam = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"];
     let menit = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59"];
 
-    return callback("Pembelian "+ harga[0].name + " untuk "+ nomor +" dengan "+ bayar+ " sejumlah Rp " + uniqprice + ",00.(diskon Rp " + (harga[0].price - uniqprice) + ") berhasil.\nHarap melakukan transfer ke rekening BNI berikut: 0427222248 (a.n Muhammad Habibullah) paling lambat pukul " + jam[date3hour.getHours()] + "." + menit[date3hour.getMinutes()] + " hari " + hari[date3hour.getDay()] + ", " + date3hour.getDate() + " " + bulan[date3hour.getMonth()] + " " + date3hour.getFullYear() + ".\nMohon transfer sesuai dengan jumlah transfer agar dapat diproses secara otomatis." + "*n");
+    return callback("Pembelian "+ harga[0].name + " untuk "+ nomor +" dengan "+ bayar+ " sejumlah Rp " + uniqprice + ",00 (diskon Rp " + (harga[0].price - uniqprice) + ") BERHASIL.\nHarap melakukan transfer ke rekening BNI berikut: 0427222248 (a.n Muhammad Habibullah) paling lambat pukul " + jam[date3hour.getHours()] + "." + menit[date3hour.getMinutes()] + " hari " + hari[date3hour.getDay()] + ", " + date3hour.getDate() + " " + bulan[date3hour.getMonth()] + " " + date3hour.getFullYear() + ".\nMohon transfer sesuai dengan jumlah transfer agar dapat diproses secara otomatis." + "*n");
 }
 
 exports.suksesIsiPulsa = function (paidTransaction, callback) {
@@ -96,8 +96,57 @@ exports.updateStatusTransaksi = function() {
 }
 
 
-exports.riwayatTransaksi = function (user, callback) {
-    Transaksi.find({user: user}).sort({date: -1}).lean()
+exports.tanggalRiwayatTransaksi = function (user, callback) {
+    Transaksi.find({user: user}).distinct('date')
+    .then((tanggal) => {
+        //edit tanggal
+        let i;
+        let hari = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+        let bulan = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+        arrTanggal = new Array();
+        let k = 0;
+        for (i=0;i<tanggal.length;i++) {
+            let originDate = new Date(tanggal[i]);
+            let day = hari[originDate.getDay()];
+            let date = originDate.getDate();
+            let month = bulan[originDate.getMonth()];
+            let year = originDate.getFullYear();
+            var fullDate = day + ", "+ date + " " + month + " " + year;
+            let kembar = false;
+            for (j=0;j<i;j++) {
+                if (fullDate == arrTanggal[j]) {
+                    kembar = true;
+                }
+            }
+            if (kembar == false) {
+                arrTanggal[k] = fullDate;
+                k++;
+            }
+            kembar = false;
+        }
+        return callback(arrTanggal);
+    })
+    .catch((err) => {
+        console.log(err);
+        return callback (false);
+    })
+}
+
+exports.riwayatTransaksi = function (user, date, callback) {
+    let date1;
+    let date2;
+    if (date == '') {
+        date1 = new Date(1999, 12, 31, 23, 59, 59);
+        date2 = new Date(2049, 12, 31, 23, 59, 59);
+    } else  {
+        let dd = (date.substring(0,2));
+        let mm = (date.substring(2,4));
+        let yyyy = parseInt(date.substring(4,8));
+        date1 = new Date(yyyy+'-'+mm+'-'+dd+'T00:00:00');
+        date2 = new Date(yyyy+'-'+mm+'-'+dd+'T23:59:59');
+        dateNow = new Date();
+    }
+    Transaksi.find({user: user, date: {$gte: date1/*+1hari*/, $lte: date2}}).sort({date: -1}).lean()
     .then((RiwayatTransaksi) => {
         //edit tanggal
         let i;

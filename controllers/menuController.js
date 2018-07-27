@@ -2,10 +2,33 @@ var transaksi_controller = require('../controllers/transaksiController');
 var user_controller = require('../controllers/userController');
 var faq_controller = require('../controllers/faqController');
 var terms_controller = require('../controllers/termsController');
+
+exports.tanggalRiwayatTransaksi = function (req, res) {
+    if (req.body.session !== '') {
+        user_controller.ambilDataUser(req.body.session, user => {
+            transaksi_controller.tanggalRiwayatTransaksi(user, (arrTanggal) => {
+                if (arrTanggal) {
+                    res.json(arrTanggal);
+                } else {
+                    res.send('Data tanggal riwayat tidak ada dalam database');
+                }
+            })
+        })
+    } else if (req.body.deviceId) {
+        transaksi_controller.tanggalRiwayatTransaksi(req.body.deviceId, (arrTanggal) => {
+            if (arrTanggal) {
+                res.json(arrTanggal);
+            } else {
+                res.send('Data tanggal riwayat tidak ada dalam database');
+            }
+        })
+    }
+}
+
 exports.riwayatTransaksi = function (req, res) {
     if (req.body.session !== '') {
         user_controller.ambilDataUser(req.body.session, user => {
-            transaksi_controller.riwayatTransaksi(user, (arrRiwayat) => {
+            transaksi_controller.riwayatTransaksi(user, req.body.date, (arrRiwayat) => {
                 if (arrRiwayat) {
                     res.json(arrRiwayat);
                 } else {
@@ -14,7 +37,7 @@ exports.riwayatTransaksi = function (req, res) {
             })
         })
     } else if (req.body.deviceId) {
-        transaksi_controller.riwayatTransaksi(req.body.deviceId, (arrRiwayat) => {
+        transaksi_controller.riwayatTransaksi(req.body.deviceId, req.body.date, (arrRiwayat) => {
             if (arrRiwayat) {
                 res.json(arrRiwayat);
             } else {

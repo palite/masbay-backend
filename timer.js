@@ -43,12 +43,13 @@ function keepNotSleeping() {
     var request = require("request");
     var options = {
         method: 'GET',
-        url: 'https://intense-inlet-67504.herokuapp.com/faq',
+        url: process.env.URLKEEPNOTSLEEP,
         headers: 
         { 'Cache-Control': 'no-cache' }
     };
     request(options, function (error, response, body) {
-        console.log(body);
+        //console.log(body);
+        console.log('berhasil keep not sleeping')
     })
 }
 
@@ -59,6 +60,6 @@ function stop() {
 }
 
 keepNotSleeping();
-setInterval(crawl, 180000); //3 menit
+setInterval(crawl, 300000); //5 menit
 setInterval(keepNotSleeping, 180000); //3 menit
 setInterval(stop, 590000); //9 menit 50 detik
