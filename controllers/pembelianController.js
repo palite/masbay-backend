@@ -181,7 +181,7 @@ exports.cekSaldo = function (denom, nomor, session, callback) {
                     let pesanKonfirmasi = "Pembelian "+ harga[0].name + " untuk "+ nomor +" dengan saldo seharga Rp " + harga[0].price + ",00.\nApakah anda yakin ? (y/n)*yn";
                     return callback(pesanKonfirmasi);
                 } else {
-                    return callback('Saya tidak ingin menambah kekurangan (saldo) Anda. :)');
+                    return callback('Saldo tidak cukup / tidak ada!');
                 }
             })
         })
