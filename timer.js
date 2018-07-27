@@ -48,7 +48,7 @@ function keepNotSleeping() {
         { 'Cache-Control': 'no-cache' }
     };
     request(options, function (error, response, body) {
-        console.log(body);
+        console.log('keep not sleeping success');
     })
 }
 
