@@ -54,12 +54,13 @@ function keepNotSleeping() {
 }
 
 function stop() {
-    date = new Date();
-    console.log(date);
+    //date = new Date();
+    //console.log(date);
     process.exit();
 }
 
 keepNotSleeping();
-setInterval(crawl, 300000); //5 menit
+crawl();
+setInterval(crawl, 290000); //5 menit - 10 detik
 setInterval(keepNotSleeping, 180000); //3 menit
-setInterval(stop, 590000); //9 menit 50 detik
+setInterval(stop, 600000); //10 menit
