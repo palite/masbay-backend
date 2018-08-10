@@ -54,6 +54,7 @@ exports.changemail = function (req,res) {
 
             });
             mail_controller.email(req.body.userId,"Hai, \n Masukkan kode anda"+random+" \n kedalam hp anda!");
+            res.send(data);
             
             
             /*var mailOptions = {
